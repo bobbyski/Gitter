@@ -1,0 +1,32 @@
+MenuBar {
+    dock: top;
+    height: 1;
+    background: blue;
+    color: $text;
+}
+
+MenuBar > Horizontal {
+    width: 100%;
+}
+
+MenuBar Label {
+    padding: 0 2;
+}
+
+MenuBar Label:hover {
+    background: cyan
+    ;
+}
+
+FileMenu {
+    align: left top;
+}
+
+#menu_list {
+    width: 20;
+    height: auto;
+    margin-top: 1;
+    margin-left: 2;
+    border: solid white;
+    background: blue;
+}

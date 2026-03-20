@@ -8,9 +8,11 @@ from MenuBar import MenuBar
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
+    CSS_PATH = "menu_app.tcss"
+
     BINDINGS = [
-        ("q", "quit", "Quit"),
-        ("f", "show_file_menu", "File Menu"),
+        ("^q", "quit", "Quit"),
+        ("^f", "show_file_menu", "File Menu"),
     ]
 
     def compose(self) -> ComposeResult:

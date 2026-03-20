@@ -6,20 +6,6 @@ from textual.screen import ModalScreen
 class FileMenu(ModalScreen):
     """A modal screen that displays a popup 'File' menu."""
     
-    DEFAULT_CSS = """
-    FileMenu {
-        align: left top;
-    }
-    #menu_list {
-        width: 20;
-        height: auto;
-        margin-top: 1;
-        margin-left: 2;
-        border: solid white;
-        background: $panel;
-    }
-    """
-
     def compose(self) -> ComposeResult:
         yield OptionList(
             "New",

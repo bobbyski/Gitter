@@ -1,4 +1,4 @@
-from textual import on
+from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Static, OptionList, Label
@@ -88,7 +88,7 @@ class MenuApp(App):
     def action_show_file_menu(self) -> None:
         self.push_screen(FileMenu())
 
-    # @on(Label.Clicked, "#file_menu_label")
+    @on(events.Click, "#file_menu_label")
     def handle_file_click(self) -> None:
         self.push_screen(FileMenu())
 

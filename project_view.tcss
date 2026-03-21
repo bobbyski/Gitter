@@ -3,4 +3,5 @@ ProjectView {
     border: double white;
     width: 50%;
     height: 100%;
+    border-title-align: left;
 }

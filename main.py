@@ -1,7 +1,17 @@
-# This is a sample Python script.
+import click
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+
+# @click.group
+# def cli():
+#     pass
+
+@click.command()
+@click.version_option(version='0.0.1')
+
+def show_version(version):
+    """Display the version information and exit."""
+    print(f"Version {version}")
+    exit(0)
 
 
 def print_hi(name):
@@ -9,8 +19,11 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
 
 
+# cli.add_command(show_version)
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
+    show_version('0.0.1')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

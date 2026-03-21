@@ -14,7 +14,7 @@ class MenuApp(App):
 
     BINDINGS = [
         ("^q", "quit", "Quit"),
-        ("^f", "show_file_menu", "File Menu"),
+        # ("^f", "show_file_menu", "File Menu"),
     ]
 
     def compose(self) -> ComposeResult:

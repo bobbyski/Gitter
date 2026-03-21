@@ -20,11 +20,13 @@ class ProjectView(Static):
         )
         with VerticalScroll(id="project_list"):
             for project in self.projects:
-                yield Horizontal(
+                row = Horizontal(
                     Label(project.name, classes="name"),
                     Label(project.directory, classes="directory"),
                     classes="row"
                 )
+                row.can_focus = True
+                yield row
 
 
     def on_mount(self) -> None:

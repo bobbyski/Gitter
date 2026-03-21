@@ -11,6 +11,12 @@ ProjectView {
     width: 100%;
 }
 
+.row:focus {
+    background: blue;
+    color: white;
+    text-style: bold;
+}
+
 .header-row {
     background: gray;
     color: white;

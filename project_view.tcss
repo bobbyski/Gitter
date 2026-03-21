@@ -1,0 +1,38 @@
+ProjectView {
+    background: black;
+    border: double white;
+    width: 50%;
+    height: 100%;
+    border-title-align: left;
+}
+
+.row {
+    height: 1;
+    width: 100%;
+}
+
+.row:focus {
+    background: blue;
+    color: white;
+    text-style: bold;
+}
+
+.header-row {
+    background: gray;
+    color: white;
+    text-style: bold;
+}
+
+.name {
+    width: 33%;
+    padding-left: 1;
+}
+
+.directory {
+    width: 67%;
+    padding-left: 1;
+}
+
+#project_list {
+    height: 1fr;
+}

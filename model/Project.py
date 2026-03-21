@@ -4,3 +4,4 @@ from dataclasses import dataclass
 class Project:
     name: str
     directory: str
+    status: str

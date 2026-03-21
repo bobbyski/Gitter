@@ -14,8 +14,8 @@ MenuBar Label {
 }
 
 MenuBar Label:hover {
-    background: cyan
-    ;
+    background: lightgray;
+    color: blue;
 }
 
 FileMenu {
@@ -28,5 +28,15 @@ FileMenu {
     margin-top: 1;
     margin-left: 2;
     border: solid white;
+    background: blue;
+}
+
+.main_container {
+    background: #444460;
+}
+
+Footer {
+    dock: bottom;
+    height: 1;
     background: blue;
 }

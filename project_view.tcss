@@ -1,0 +1,6 @@
+ProjectView {
+    background: black;
+    border: double white;
+    width: 50%;
+    height: 100%;
+}

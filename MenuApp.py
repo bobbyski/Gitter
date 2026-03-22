@@ -51,6 +51,9 @@ class MenuApp(App):
 
         print(MainFileManager.shared)
 
+        for project in MainFileManager.shared.projects:
+            project.update_status()
+
 
 if __name__ == "__main__":
     app = MenuApp()

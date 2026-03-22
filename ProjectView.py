@@ -16,6 +16,7 @@ class ProjectView(Static):
         yield Horizontal(
             Label("Project Name", classes="header name"),
             Label("Directory", classes="header directory"),
+            Label("Status", classes="header status"),
             classes="row header-row"
         )
         with VerticalScroll(id="project_list"):
@@ -23,6 +24,7 @@ class ProjectView(Static):
                 row = Horizontal(
                     Label(project.name, classes="name"),
                     Label(project.directory, classes="directory"),
+                    Label( f"{project.status}", classes="status"),
                     classes="row"
                 )
                 row.can_focus = True
@@ -31,6 +33,15 @@ class ProjectView(Static):
 
     def on_mount(self) -> None:
         self.border_title = self.title
+
+        # self.update_all()update_all
+
+
+    def update_all(self):
+        for project in self.projects:
+            project.update_status()
+
+        MainFileManager.save_shared_to_json( "/Users/bobby/gitter.json")
 
 class ProjectApp(App):
     CSS_PATH = "project_view.tcss"

@@ -1,7 +1,7 @@
 ProjectView {
     background: black;
     border: double white;
-    width: 50%;
+    width: 65%;
     height: 100%;
     border-title-align: left;
 }
@@ -24,12 +24,17 @@ ProjectView {
 }
 
 .name {
-    width: 33%;
+    width: 25%;
     padding-left: 1;
 }
 
 .directory {
-    width: 67%;
+    width: 40%;
+    padding-left: 1;
+}
+
+.status {
+    width: 35%;
     padding-left: 1;
 }
 

@@ -1,7 +1,9 @@
 
 import subprocess
 
+from model.GitLog import GitLog
 from model.GitStatus import GitStatus
+from rich_log import GitterLogger
 
 
 class GitManager:
@@ -23,8 +25,11 @@ class GitManager:
         if self.repo is None:
             return "No repository initialized"
 
-        theLogs = subprocess.run( ["git", "-C", self.repo, "logs", "-n", f"{limit}", f"{branch}"],
+        theLogs = subprocess.run( ["git", "-C", self.repo, "log", "-n", f"{limit}", f"{branch}"],
                                   capture_output=True, text=True)
 
+        # GitterLogger.log( f"Git logs: {theLogs.stdout}" )
+        # GitterLogger.log( f"Git error: {theLogs.stderr}" )
 
+        return GitLog.parse_logstring( theLogs.stdout )
 

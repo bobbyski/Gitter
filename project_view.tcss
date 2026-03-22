@@ -2,7 +2,7 @@ ProjectView {
     background: black;
     border: double white;
     width: 65%;
-    height: 100%;
+    height: 70%;
     border-title-align: left;
 }
 
@@ -40,4 +40,25 @@ ProjectView {
 
 #project_list {
     height: 1fr;
+}
+
+.top-bar {
+    dock: top;
+    height: 3;
+}
+
+.toolbar_button {
+    background: blue;
+    margin: 0 2;
+}
+
+.left_side {
+    dock: left;
+}
+
+.right_side {
+    dock: right;
+}
+
+.middle {
 }

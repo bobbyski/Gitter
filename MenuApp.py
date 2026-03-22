@@ -9,6 +9,7 @@ from MenuBar import MenuBar
 from ProjectView import ProjectView
 from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
+from rich_log import RichLogWindow
 
 
 class MenuApp(App):
@@ -23,11 +24,13 @@ class MenuApp(App):
 
     def compose(self) -> ComposeResult:
         self.project = ProjectView()
+        self.logWindow = RichLogWindow()
 
         yield Header()
         yield MenuBar()
-        # self.mainContainer = Container( Label("Welcome to the Menu App!", id="welcome"), id="main_container")
-        self.mainContainer = Container( self.project, classes="main_container", id="main_container")
+        self.mainContainer = Container( self.project, self.logWindow, classes="main_container", id="main_container")
+        # self.mainContainer = Container( self.logWindow, self.project, classes="main_container", id="main_container")
+        # self.mainContainer = Container( self.logWindow, classes="main_container", id="main_container")
         yield self.mainContainer
         yield Footer()
 

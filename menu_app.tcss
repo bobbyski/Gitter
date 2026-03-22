@@ -40,3 +40,8 @@ Footer {
     height: 1;
     background: blue;
 }
+
+RichLogWindow {
+    height: 30%;
+    width: 100%;
+}

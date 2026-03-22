@@ -41,7 +41,7 @@ class GitStatus:
         if len(self.filesAdded) > 0:
             if result != "":
                 result += " "
-            result += f"add: {len(self.filesAdded)}"
+            result += f"new: {len(self.filesAdded)}"
 
         if len(self.filesModified ) > 0:
             if result != "":
@@ -56,7 +56,7 @@ class GitStatus:
         if len(self.filesUntracked ) > 0:
             if result != "":
                 result += " "
-            result += f"new: {len(self.filesUntracked)}"
+            result += f"ut: {len(self.filesUntracked)}"
 
         if result != "":
             result += " "

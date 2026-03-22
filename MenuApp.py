@@ -49,8 +49,6 @@ class MenuApp(App):
 
         MainFileManager.load_shared_from_json(pathname)
 
-        print(MainFileManager.shared)
-
         for project in MainFileManager.shared.projects:
             project.update_status()
 

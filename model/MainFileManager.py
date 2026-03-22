@@ -25,7 +25,12 @@ class MainFileManager:
 
         loaded = MainFile(data.get("name", "untitled"))
         loaded.projects = [
-            Project(project_data.get("name", ""), project_data.get("directory", ""), project_data.get("status", "") )
+            Project( project_data.get("name", ""),
+                     project_data.get("directory", ""),
+                     project_data.get("status", ""),
+                     project_data.get("tagBranch", "master"),
+                     project_data.get("issuePrefixes", [] ),
+                     project_data.get("prPatterns", [] ))
             for project_data in data.get("projects", [])
         ]
 

@@ -20,6 +20,11 @@ class GitManager:
         return result
 
     def get_logs(self, limit: int = 1000, branch: str = "master"):
-        pass
+        if self.repo is None:
+            return "No repository initialized"
+
+        theLogs = subprocess.run( ["git", "-C", self.repo, "logs", "-n", f"{limit}", f"{branch}"],
+                                  capture_output=True, text=True)
+
 
 

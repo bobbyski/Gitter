@@ -41,49 +41,50 @@ class GitLog:
             current = None
             message_lines = []
 
-        GitterLogger.log( f"Parsing logstring of length {len(logstring)}" )
+        if len(logstring) > 0:
+            GitterLogger.log( f"Parsing logstring of length {len(logstring)}" )
 
-        for raw_line in logstring.splitlines():
-            line = raw_line.rstrip()
+            for raw_line in logstring.splitlines():
+                line = raw_line.rstrip()
 
-            if not line.strip():
-                continue
+                if not line.strip():
+                    continue
 
-            if line.startswith("commit "):
-                finalize_current()
-                current = cls()
+                if line.startswith("commit "):
+                    finalize_current()
+                    current = cls()
 
-                commit_part = line[len("commit "):].strip()
-                refs_match = re.search(r"\((.*?)\)", commit_part)
+                    commit_part = line[len("commit "):].strip()
+                    refs_match = re.search(r"\((.*?)\)", commit_part)
 
-                if refs_match:
-                    current.commit = commit_part[:refs_match.start()].strip()
-                    refs = [ref.strip() for ref in refs_match.group(1).split(",")]
+                    if refs_match:
+                        current.commit = commit_part[:refs_match.start()].strip()
+                        refs = [ref.strip() for ref in refs_match.group(1).split(",")]
 
-                    for ref in refs:
-                        if ref.startswith("tag: "):
-                            current.tags.append(ref[len("tag: "):].strip())
-                        elif ref.startswith("HEAD -> "):
-                            current.heads.append(ref[len("HEAD -> "):].strip())
-                        else:
-                            current.heads.append(ref)
-                else:
-                    current.commit = commit_part
+                        for ref in refs:
+                            if ref.startswith("tag: "):
+                                current.tags.append(ref[len("tag: "):].strip())
+                            elif ref.startswith("HEAD -> "):
+                                current.heads.append(ref[len("HEAD -> "):].strip())
+                            else:
+                                current.heads.append(ref)
+                    else:
+                        current.commit = commit_part
 
-            elif current is not None and line.startswith("Author: "):
-                current.author = line[len("Author: "):].strip()
+                elif current is not None and line.startswith("Author: "):
+                    current.author = line[len("Author: "):].strip()
 
-            elif current is not None and line.startswith("Date:   "):
-                current.date = line[len("Date:   "):].strip()
+                elif current is not None and line.startswith("Date:   "):
+                    current.date = line[len("Date:   "):].strip()
 
-            elif current is not None:
-                if line.startswith("    "):
-                    message_lines.append(line[4:])
-                else:
-                    message_lines.append(line.strip())
+                elif current is not None:
+                    if line.startswith("    "):
+                        message_lines.append(line[4:])
+                    else:
+                        message_lines.append(line.strip())
 
-        finalize_current()
+            finalize_current()
 
-        GitterLogger.log( f"Parsed {len(logs)} logs" )
+            GitterLogger.log( logs )
 
         return logs

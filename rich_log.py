@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import csv
 import io
 
+from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.table import Table
 
@@ -35,7 +38,11 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
         previous_value = value
     yield first, True, previous_value\
 '''
-class RichLogWindow(Widget, can_focus=True):
+class RichLogWindow(Static):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.border_title = "Debug Log"
+
     def compose(self) -> ComposeResult:
         GitterLogger.logView = self
         yield RichLog(highlight=True, markup=True)
@@ -64,11 +71,12 @@ class GitterLogger:
     logView: RichLogWindow = None
 
     @classmethod
-    def log(cls, message: str):
+    def log(cls, message: RenderableType | object):
         if GitterLogger.logView is None:
             print(message)
         else:
             GitterLogger.logView.query_one(RichLog).write(message)
+
 
 
 class RichLogApp(App):

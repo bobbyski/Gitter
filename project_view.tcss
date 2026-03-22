@@ -2,7 +2,7 @@ ProjectView {
     background: black;
     border: double white;
     width: 65%;
-    height: 70%;
+    height: 60%;
     border-title-align: left;
 }
 

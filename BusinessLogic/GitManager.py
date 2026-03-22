@@ -18,6 +18,8 @@ class GitManager:
         result.process_status_response(theStatus.stdout)
 
         return result
-        return self.repo.status()
+
+    def get_logs(self, limit: int = 1000, branch: str = "master"):
+        pass
 
 

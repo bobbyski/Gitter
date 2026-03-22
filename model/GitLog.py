@@ -59,7 +59,8 @@ class GitLog:
 
                     if refs_match:
                         current.commit = commit_part[:refs_match.start()].strip()
-                        refs = [ref.strip() for ref in refs_match.group(1).split(",")]
+                        refs_text = refs_match.group(1)
+                        refs = [ref.strip() for ref in refs_text.split(",")]
 
                         for ref in refs:
                             if ref.startswith("tag: "):
@@ -85,6 +86,6 @@ class GitLog:
 
             finalize_current()
 
-            GitterLogger.log( logs )
+            GitterLogger.log(logs)
 
         return logs

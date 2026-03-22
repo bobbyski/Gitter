@@ -30,7 +30,11 @@ class MainFileManager:
                      project_data.get("status", ""),
                      project_data.get("tagBranch", "master"),
                      project_data.get("issuePrefixes", [] ),
-                     project_data.get("prPatterns", [] ))
+                     project_data.get("prPatterns", [] ),
+                     project_data.get("commits", [] ),
+                     project_data.get("issues", [] ),
+                     project_data.get("releases", [] )
+                     )
             for project_data in data.get("projects", [])
         ]
 

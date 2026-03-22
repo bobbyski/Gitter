@@ -25,7 +25,7 @@ class GitManager:
         if self.repo is None:
             return "No repository initialized"
 
-        theLogs = subprocess.run( ["git", "-C", self.repo, "log", "-n", f"{limit}", f"{branch}"],
+        theLogs = subprocess.run( ["git", "-C", self.repo, "log", "--decorate", "-n", f"{limit}", f"{branch}"],
                                   capture_output=True, text=True)
 
         # GitterLogger.log( f"Git logs: {theLogs.stdout}" )

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import re
 
+from model.Issue import Issue
+from model.Release import Release
 from rich_log import GitterLogger
 
 
@@ -21,10 +23,33 @@ class GitLog:
         self.tags = []
         self.heads = []
 
+    def get_release(self):
+        result = None
+
+        for tag in self.tags:
+            if tag.startswith("v"):
+                result = Release()
+                result.name = tag
+                result.date = self.date
+                # result.commit.append(self)
+            elif re.fullmatch(r"\d+(\.\d+)*", tag):
+                result = Release()
+                result.name = tag
+                result.date = self.date
+                # result.commit.append(self)
+
+        return result
+
+    def get_issue(self, issuePrefixes: list[str]):
+        for prefix in issuePrefixes:
+            match = re.search(rf"\b{re.escape(prefix)}[- ]?(\d+)\b", self.message)
+            if match:
+                return f"{prefix}{match.group(1)}"
+        return None
 
     def __repr__(self):
         return f"GitLog(commit='{self.commit}', message='{self.message}', author='{self.author}', date='{self.date}', tags={self.tags}, heads={self.heads})"
-    
+
     @classmethod
     def parse_logstring(cls, logstring: str):
         logs = []
@@ -42,8 +67,6 @@ class GitLog:
             message_lines = []
 
         if len(logstring) > 0:
-            GitterLogger.log( f"Parsing logstring of length {len(logstring)}" )
-
             for raw_line in logstring.splitlines():
                 line = raw_line.rstrip()
 
@@ -86,6 +109,6 @@ class GitLog:
 
             finalize_current()
 
-            GitterLogger.log(logs)
+        # GitterLogger.log(logs)
 
         return logs

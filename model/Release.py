@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from BusinessLogic.GitManager import GitManager
-from model.GitLog import GitLog
 from model.Issue import Issue
 
 
@@ -8,5 +6,20 @@ from model.Issue import Issue
 class Release:
     name: str
     date: str
-    commits: list[GitLog]
     issues: list[Issue]
+
+    def __init__(self):
+        self.name = ""
+        self.date = ""
+        self.issues = []
+
+    def has_issue(self, issue_number: str ):
+        result = False
+
+        for issue in self.issues:
+            if issue.number == issue_number:
+                result = True
+                break
+
+        return result
+

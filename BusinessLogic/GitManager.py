@@ -3,6 +3,7 @@ import subprocess
 
 from model.GitLog import GitLog
 from model.GitStatus import GitStatus
+from model.Release import Release
 from rich_log import GitterLogger
 
 
@@ -21,12 +22,17 @@ class GitManager:
 
         return result
 
-    def get_logs(self, limit: int = 1000, branch: str = "master"):
+    def get_logs(self, limit: int = 1000, branch: str = ""):
+        # GitterLogger.log( f"**********************************\nGetting logs for branch {branch} at {self.repo}\n**********************************" )
+
         if self.repo is None:
             return "No repository initialized"
 
-        theLogs = subprocess.run( ["git", "-C", self.repo, "log", "--decorate", "-n", f"{limit}", f"{branch}"],
-                                  capture_output=True, text=True)
+        args = ["git", "-C", self.repo, "log", "--decorate", "-n", f"{limit}"]
+        if (branch != ""):
+            args.append( branch)
+
+        theLogs = subprocess.run( args, capture_output=True, text=True)
 
         # GitterLogger.log( f"Git logs: {theLogs.stdout}" )
         # GitterLogger.log( f"Git error: {theLogs.stderr}" )

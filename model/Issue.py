@@ -1,7 +1,10 @@
 from dataclasses import dataclass
-from BusinessLogic.GitManager import GitManager
 
 @dataclass
 class Issue:
     number: str
     title: str
+
+    def __init__(self):
+        self.number = ""
+        self.title = ""

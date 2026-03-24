@@ -71,7 +71,11 @@ class ProjectView(Static):
         for project in self.projects:
             project.update_status()
 
-            GitManager(project.directory).get_logs()
+            project.commits = GitManager(project.directory).get_logs()
+            project.process_commits()
+
+            GitterLogger.log( f"*****************************\nProject {project.name}\n*****************************" )
+            GitterLogger.log( project.releases )
 
 
 class ProjectApp(App):

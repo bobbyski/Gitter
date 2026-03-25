@@ -4,7 +4,7 @@ from model.Project import Project
 @dataclass
 class MainFile:
     name: str
-    projects: list
+    projects: list[Project]
 
     def __init__(self, name: str):
         self.name = name

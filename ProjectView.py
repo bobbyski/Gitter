@@ -43,6 +43,7 @@ class ProjectView(Static):
 
     def on_mount(self) -> None:
         self.border_title = self.title
+        self.set_interval(90, self.update_all)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         # GitterLogger.log(f"Button pressed: {event.button.id}")

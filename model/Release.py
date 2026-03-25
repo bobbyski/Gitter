@@ -23,3 +23,12 @@ class Release:
 
         return result
 
+    def issues_list(self):
+        result: list[str] = []
+
+        for issue in self.issues:
+            result.append(issue.number)
+
+        return result
+
+

@@ -25,6 +25,7 @@ class ProjectView(Static):
                 Label("Project Name", classes="header name"),
                 Label("Directory", classes="header directory"),
                 Label("Status", classes="header status"),
+                Label("Next Release", classes="header issues_list"),
                 classes="row header-row"
             )
 
@@ -34,6 +35,7 @@ class ProjectView(Static):
                         Label(project.name, classes="name"),
                         Label(project.directory, classes="directory"),
                         Label(f"{project.status}", classes="status"),
+                        Label(f"{project.issues_string_for_release()}", classes="issues_list"),
                         classes="row"
                     )
                     row.can_focus = True

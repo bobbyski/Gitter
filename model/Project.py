@@ -4,8 +4,6 @@ from model.GitLog import GitLog
 from model.Issue import Issue
 from model.Release import Release
 import re
-from rich_log import GitterLogger
-
 
 @dataclass
 class Project:
@@ -44,7 +42,7 @@ class Project:
 
                     current.issues.append(theIssue)
 
-    def strip_issue(self, issue_number: str, source: str):
+    def strip_issue(self, issue_number: str, source: str ):
         longest = ""
         segments = source.split(issue_number)
 
@@ -52,9 +50,22 @@ class Project:
             if len(segment) > len(longest):
                 longest = segment
 
-        longest = re.sub(r"^[^A-Za-z0-9]+|[^A-Za-z0-9]+$", "", longest)
+        while longest and not longest[0].isalnum():
+            longest = longest[1:]
+
         return longest
 
+    def issues_for_release(self, release: Release = "Next release"):
+        result: list[Issue] = []
+
+        for release in self.releases:
+            if release.name == release:
+                for issue in release.issues:
+                    result.append(issue.number)
+
+        return result
 
 
+    def issues_string_for_release(self, release: Release = "Next release", delimiter = ", "):
+        return delimiter.join(self.issues_for_release(release))
 

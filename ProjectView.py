@@ -25,7 +25,7 @@ class ProjectView(Static):
                 Label("Project Name", classes="header name"),
                 Label("Directory", classes="header directory"),
                 Label("Status", classes="header status"),
-                Label("Next Release", classes="header issues_list"),
+                Label("Next/Last Release", classes="header issues_list"),
                 classes="row header-row"
             )
 

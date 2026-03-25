@@ -32,11 +32,18 @@ FileMenu {
 }
 
 .main_container {
-    background: #444460;
+    background: black;
 }
 
 Footer {
     dock: bottom;
     height: 1;
     background: blue;
+}
+
+RichLogWindow {
+    height: 40%;
+    width: 100%;
+    border: solid white;
+    border-title-align: left;
 }

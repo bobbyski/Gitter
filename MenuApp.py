@@ -4,11 +4,14 @@ from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import Header, Footer, Label
+
+from BusinessLogic.GitManager import GitManager
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
 from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
+from rich_log import RichLogWindow
 
 
 class MenuApp(App):
@@ -23,11 +26,13 @@ class MenuApp(App):
 
     def compose(self) -> ComposeResult:
         self.project = ProjectView()
+        self.logWindow = RichLogWindow()
 
         yield Header()
         yield MenuBar()
-        # self.mainContainer = Container( Label("Welcome to the Menu App!", id="welcome"), id="main_container")
-        self.mainContainer = Container( self.project, classes="main_container", id="main_container")
+        self.mainContainer = Container( self.project, self.logWindow, classes="main_container", id="main_container")
+        # self.mainContainer = Container( self.logWindow, self.project, classes="main_container", id="main_container")
+        # self.mainContainer = Container( self.logWindow, classes="main_container", id="main_container")
         yield self.mainContainer
         yield Footer()
 
@@ -49,10 +54,8 @@ class MenuApp(App):
 
         MainFileManager.load_shared_from_json(pathname)
 
-        print(MainFileManager.shared)
-
         for project in MainFileManager.shared.projects:
-            project.update_status()
+            project.update()
 
 
 if __name__ == "__main__":

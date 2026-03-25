@@ -45,7 +45,7 @@ class ProjectView(Static):
         self.border_title = self.title
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        GitterLogger.log(f"Button pressed: {event.button.id}")
+        # GitterLogger.log(f"Button pressed: {event.button.id}")
         if event.button.id == "refresh_button":
             self.update_all()
             self.refresh_table()
@@ -71,13 +71,12 @@ class ProjectView(Static):
 
         GitterLogger.log( "Updating all projects" )
         for project in self.projects:
-            project.update_status()
+            project.update()
 
-            project.commits = GitManager(project.directory).get_logs()
-            project.process_commits()
+            # GitterLogger.log( f"*****************************\nProject {project.name}\n*****************************" )
+            # GitterLogger.log( project.releases )
 
-            GitterLogger.log( f"*****************************\nProject {project.name}\n*****************************" )
-            GitterLogger.log( project.releases )
+        self.refresh( recompose=True )
 
 
 class ProjectApp(App):

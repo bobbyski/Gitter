@@ -4,6 +4,8 @@ from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import Header, Footer, Label
+
+from BusinessLogic.GitManager import GitManager
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
@@ -53,7 +55,7 @@ class MenuApp(App):
         MainFileManager.load_shared_from_json(pathname)
 
         for project in MainFileManager.shared.projects:
-            project.update_status()
+            project.update()
 
 
 if __name__ == "__main__":

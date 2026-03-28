@@ -6,6 +6,7 @@ from textual.containers import Container
 from textual.widgets import Header, Footer, Label
 
 from BusinessLogic.GitManager import GitManager
+from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
 from ViewMenu import ViewMenu
@@ -44,11 +45,22 @@ class MenuApp(App):
         self.push_screen(FileMenu())
 
     def action_show_view_menu(self) -> None:
-        self.push_screen(ViewMenu())
+        logs_visible = self.logWindow.display
+        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
 
     @on(events.Click, "#view_menu_label")
     def handle_view_click(self) -> None:
-        self.push_screen(ViewMenu())
+        logs_visible = self.logWindow.display
+        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
+
+    def on_view_menu_result(self, result: str) -> None:
+        """Handle the result from ViewMenu."""
+        if result == "Show logs":
+            self.logWindow.display = True
+        elif result == "Hide logs":
+            self.logWindow.display = False
+        elif result == "Refresh":
+            self.project.update_all()
 
     def __init__(self):
         super().__init__()

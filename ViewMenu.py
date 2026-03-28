@@ -3,31 +3,25 @@ from textual.app import ComposeResult
 from textual.widgets import OptionList
 from textual.screen import ModalScreen
 
-class ViewMenu(ModalScreen):
-    logsString = "Show logs"
+from rich_log import GitterLogger
+
+
+class ViewMenu(ModalScreen[str]):
+    def __init__(self, logs_visible: bool):
+        super().__init__()
+        self._logs_label = "Hide logs" if logs_visible else "Show logs"
 
     def compose(self) -> ComposeResult:
         yield OptionList(
             "Refresh",
             "---",
-            ViewMenu.logsString,
+            self._logs_label,
             id="view_list"
         )
 
     @on(OptionList.OptionSelected)
     def handle_option_selected(self, event: OptionList.OptionSelected) -> None:
-        if str(event.option.prompt) == ViewMenu.logsString:
-            if ViewMenu.logsString == "Show logs":
-                ViewMenu.logsString = "Hide logs"
-        elif str(event.option.prompt) == "Refresh":
-            self.app.refresh()
-        else:
-                ViewMenu.logsString = "Show logs"
-
-        # else:
-            # For other options, just close the menu
-            # self.dismiss()
+        self.dismiss(str(event.option.prompt))
 
     def on_click(self) -> None:
-        # Close the menu if clicked outside
-        self.dismiss()
+        GitterLogger.log( "View menu clicked (ViewMenu)" )

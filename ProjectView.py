@@ -1,3 +1,4 @@
+from textual import on, events
 from textual.app import App, ComposeResult
 from textual.widgets import Static, Label, Button, RichLog
 from textual.containers import VerticalScroll, Horizontal, Vertical
@@ -13,8 +14,15 @@ class ProjectView(Static):
         super().__init__(*args, **kwargs)
         self.title = MainFileManager.shared.name
         self.projects = MainFileManager.shared.projects
+        self.heightClass = "project_view_full_height"
+        self.widthClass = "project_view_full_width"
+        self.classes = self.container_class()
+
+    def container_class(self):
+        return f"project_view {self.widthClass} {self.heightClass}"
 
     def compose(self) -> ComposeResult:
+        self.classes = self.container_class()
         with Vertical():
             with Horizontal(classes="top-bar"):
                 yield Button("Refresh", id="refresh_button", classes="toolbar_button")
@@ -79,6 +87,10 @@ class ProjectView(Static):
 
         self.refresh( recompose=True )
 
+
+    @on(events.Click, "#view_menu_label")
+    def handle_view_click(self) -> None:
+        GitterLogger.log( "View menu clicked (ProjectView)" )
 
 class ProjectApp(App):
     CSS_PATH = "project_view.tcss"

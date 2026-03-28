@@ -6,9 +6,9 @@ from textual.containers import Container
 from textual.widgets import Header, Footer, Label
 
 from BusinessLogic.GitManager import GitManager
-from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
+from ViewMenu import ViewMenu
 from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
 from rich_log import RichLogWindow
@@ -42,6 +42,13 @@ class MenuApp(App):
     @on(events.Click, "#file_menu_label")
     def handle_file_click(self) -> None:
         self.push_screen(FileMenu())
+
+    def action_show_view_menu(self) -> None:
+        self.push_screen(ViewMenu())
+
+    @on(events.Click, "#view_menu_label")
+    def handle_view_click(self) -> None:
+        self.push_screen(ViewMenu())
 
     def __init__(self):
         super().__init__()

@@ -22,6 +22,11 @@ FileMenu {
     align: left top;
 }
 
+ViewMenu {
+    align: left top;
+}
+
+
 #menu_list {
     width: 20;
     height: auto;

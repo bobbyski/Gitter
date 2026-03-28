@@ -43,6 +43,9 @@ model/
 
 menu_app.tcss       # Textual CSS for the main app layout
 project_view.tcss   # Textual CSS for the project table
+
+README.md
+LICENSE.md
 ```
 
 ## Data persistence

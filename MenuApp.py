@@ -57,10 +57,12 @@ class MenuApp(App):
         """Handle the result from ViewMenu."""
         if result == "Show logs":
             self.logWindow.display = True
+            self.project.post_message(ProjectView.ResizeRequested(height="project_view_split_height"))
         elif result == "Hide logs":
             self.logWindow.display = False
+            self.project.post_message(ProjectView.ResizeRequested(height="project_view_full_height"))
         elif result == "Refresh":
-            self.project.update_all()
+            self.post_message(ProjectView.RefreshRequested())
 
     def __init__(self):
         super().__init__()

@@ -1,5 +1,6 @@
 from textual import on, events
 from textual.app import App, ComposeResult
+from textual.message import Message
 from textual.widgets import Static, Label, Button, RichLog
 from textual.containers import VerticalScroll, Horizontal, Vertical
 
@@ -10,6 +11,16 @@ from rich_log import GitterLogger
 
 
 class ProjectView(Static):
+    class RefreshRequested(Message):
+        """Message to request all ProjectView instances to refresh."""
+        pass
+
+    class ResizeRequested(Message):
+        def __init__(self, width: str=None, height: str=None):
+            self.width = width
+            self.height = height
+            super().__init__()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title = MainFileManager.shared.name
@@ -26,8 +37,9 @@ class ProjectView(Static):
         with Vertical():
             with Horizontal(classes="top-bar"):
                 yield Button("Refresh", id="refresh_button", classes="toolbar_button")
-                yield Button("Release notes", id="release_notes_button", classes="toolbar_button middle")
-                yield Button("Add", id="add_button", classes="toolbar_button right_side")
+                yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
+                yield Button("Add", id="add_button", classes="toolbar_button")
+                yield Button("Logs", id="logs_button", classes="toolbar_button right_side")
 
             yield Horizontal(
                 Label("Project Name", classes="header name"),
@@ -58,6 +70,18 @@ class ProjectView(Static):
         if event.button.id == "refresh_button":
             self.update_all()
             self.refresh_table()
+        elif event.button.id == "release_notes_button":
+            if self.widthClass == "project_view_full_width":
+                self.widthClass = "project_view_split_width"
+            else:
+                self.widthClass = "project_view_full_width"
+            self.refresh(recompose=True)
+        elif event.button.id == "logs_button":
+            if self.heightClass == "project_view_full_height":
+                self.heightClass = "project_view_split_height"
+            else:
+                self.heightClass = "project_view_full_height"
+            self.refresh(recompose=True)
         elif event.button.id == "add_button":
             # Stub for future add behavior
             pass
@@ -87,9 +111,22 @@ class ProjectView(Static):
 
         self.refresh( recompose=True )
 
+    @on(RefreshRequested)
+    def handle_refresh_requested(self, message: RefreshRequested) -> None:
+        """Handle refresh request message."""
+        self.update_all()
 
-    @on(events.Click, "#view_menu_label")
-    def handle_view_click(self) -> None:
+
+    @on(ResizeRequested)
+    def handle_view_click(self, message: ResizeRequested) -> None:
+        GitterLogger.log(f"ResizeRequested received - width: {message.width}, height: {message.height}")
+        if message.width:
+            self.widthClass = message.width
+
+        if message.height:
+            self.heightClass = message.height
+
+        self.refresh( recompose=True )
         GitterLogger.log( "View menu clicked (ProjectView)" )
 
 class ProjectApp(App):

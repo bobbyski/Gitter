@@ -12,12 +12,12 @@ ProjectView {
     width: 65%;
 }
 
-.poject_view_full_height {
-    width: 100%;
+.project_view_full_height {
+    height: 100%;
 }
 
 .project_view_split_height {
-    width: 60%;
+    height: 60%;
 }
 
 .row {
@@ -67,7 +67,7 @@ ProjectView {
 }
 
 .toolbar_button {
-    background: blue;
+    background: #2020b0;
     margin: 0 2;
 }
 

@@ -24,8 +24,9 @@ pip install -r requirements.txt
 MenuApp.py          # Entry point — App class, wires together MenuBar + ProjectView
 MenuBar.py          # Top menu bar widget
 FileMenu.py         # File menu modal screen
-ViewMenu.py         # View menu modal screen (show/hide logs)
-ProjectView.py      # Main project table view with Refresh / Release notes buttons
+ViewMenu.py         # View menu modal screen — takes current log visibility, dismisses with selected action
+ProjectView.py      # Main project table view; Refresh/Release notes/Logs/Add toolbar buttons;
+                    #   defines RefreshRequested and ResizeRequested messages
 TextWidget.py       # Custom text widget
 rich_log.py         # GitterLogger (logging helper) and RichLogWindow (log panel widget)
 

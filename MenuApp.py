@@ -9,6 +9,7 @@ from BusinessLogic.GitManager import GitManager
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
+from ViewMenu import ViewMenu
 from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
 from rich_log import RichLogWindow
@@ -42,6 +43,26 @@ class MenuApp(App):
     @on(events.Click, "#file_menu_label")
     def handle_file_click(self) -> None:
         self.push_screen(FileMenu())
+
+    def action_show_view_menu(self) -> None:
+        logs_visible = self.logWindow.display
+        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
+
+    @on(events.Click, "#view_menu_label")
+    def handle_view_click(self) -> None:
+        logs_visible = self.project.heightClass == "project_view_split_height"
+        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
+
+    def on_view_menu_result(self, result: str) -> None:
+        """Handle the result from ViewMenu."""
+        if result == "Show logs":
+            self.logWindow.display = True
+            self.project.post_message(ProjectView.ResizeRequested(height="project_view_split_height"))
+        elif result == "Hide logs":
+            self.logWindow.display = False
+            self.project.post_message(ProjectView.ResizeRequested(height="project_view_full_height"))
+        elif result == "Refresh":
+            self.post_message(ProjectView.RefreshRequested())
 
     def __init__(self):
         super().__init__()

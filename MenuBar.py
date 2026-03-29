@@ -9,5 +9,5 @@ class MenuBar(Static):
         with Horizontal():
             yield Label("File", id="file_menu_label")
             yield Label("Edit")
-            yield Label("View")
+            yield Label("View", id="view_menu_label")
             yield Label("Help")

@@ -1,9 +1,23 @@
 ProjectView {
     background: black;
     border: double white;
-    width: 65%;
-    height: 60%;
     border-title-align: left;
+}
+
+.project_view_full_width {
+    width: 100%;
+}
+
+.project_view_split_width {
+    width: 65%;
+}
+
+.project_view_full_height {
+    height: 100%;
+}
+
+.project_view_split_height {
+    height: 60%;
 }
 
 .row {
@@ -29,17 +43,17 @@ ProjectView {
 }
 
 .directory {
-    width: 30%;
+    width: 20%;
     padding-left: 1;
 }
 
 .status {
-    width: 27%;
+    width: 30%;
     padding-left: 1;
 }
 
 .issues_list {
-    width: 28%;
+    width: 25%;
     padding-left: 1;
 }
 
@@ -53,7 +67,7 @@ ProjectView {
 }
 
 .toolbar_button {
-    background: blue;
+    background: #2020b0;
     margin: 0 2;
 }
 

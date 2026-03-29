@@ -26,7 +26,7 @@ class ProjectView(Static):
         self.title = MainFileManager.shared.name
         self.projects = MainFileManager.shared.projects
         self.heightClass = "project_view_full_height"
-        self.widthClass = "project_view_full_width"
+        self.widthClass = "project_view_split_width"
         self.classes = self.container_class()
 
     def container_class(self):
@@ -37,7 +37,7 @@ class ProjectView(Static):
         with Vertical():
             with Horizontal(classes="top-bar"):
                 yield Button("Refresh", id="refresh_button", classes="toolbar_button")
-                # yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
+                yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
                 yield Button("Add", id="add_button", classes="toolbar_button right_side")
                 # yield Button("Logs", id="logs_button", classes="toolbar_button right_side")
 
@@ -66,7 +66,7 @@ class ProjectView(Static):
         self.set_interval(90, self.update_all)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        # GitterLogger.log(f"Button pressed: {event.button.id}")
+        GitterLogger.log(f"Button pressed: {event.button.id}")
         if event.button.id == "refresh_button":
             self.update_all()
             self.refresh_table()

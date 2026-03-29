@@ -1,13 +1,13 @@
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
-from textual.widgets import Markdown
+from textual.widgets import Markdown, Static
 from textual.containers import VerticalScroll
 
 
-class ReleaseNotesView(ModalScreen):
+class ReleaseNotesView(Static):
     """A modal screen that displays release notes as rendered markdown."""
 
-    CSS_PATH = "ReleaseNotes.tcss"
+    CSS_PATH = ["ReleaseNotes.tcss", "project_view.tcss"]
 
     def __init__(self, markdown_content: str, title: str = "Release Notes"):
         super().__init__()

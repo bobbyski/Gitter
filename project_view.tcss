@@ -81,3 +81,11 @@ ProjectView {
 
 .middle {
 }
+
+#ReleaseNotesView {
+    background: blue;
+    width: 35%;
+    height: 100%;
+    border: double white;
+    border-title-align: left;
+}

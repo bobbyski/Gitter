@@ -9,6 +9,7 @@ from BusinessLogic.GitManager import GitManager
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
+from ReleaseNotes import ReleaseNotesView
 from ViewMenu import ViewMenu
 from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
@@ -28,12 +29,12 @@ class MenuApp(App):
     def compose(self) -> ComposeResult:
         self.project = ProjectView()
         self.logWindow = RichLogWindow()
+        self.releaseNootesWindow = ReleaseNotesView( self.releaseNotesText )
+        self.appWindow = Container(self.project, self.releaseNootesWindow, classes="app_window")
 
         yield Header()
         yield MenuBar()
-        self.mainContainer = Container( self.project, self.logWindow, classes="main_container", id="main_container")
-        # self.mainContainer = Container( self.logWindow, self.project, classes="main_container", id="main_container")
-        # self.mainContainer = Container( self.logWindow, classes="main_container", id="main_container")
+        self.mainContainer = Container( self.appWindow, self.logWindow, classes="main_container", id="main_container")
         yield self.mainContainer
         yield Footer()
 
@@ -68,6 +69,12 @@ class MenuApp(App):
         super().__init__()
 
         pathname = str(Path.home() / ".gitter")
+
+        self.releaseNotesText = """
+        # Release Notes
+        
+        Release notes text
+        """
 
         # MainFileManager.shared = MainFile("untitled")
         # MainFileManager.shared.setupSampleData()

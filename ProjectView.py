@@ -37,9 +37,9 @@ class ProjectView(Static):
         with Vertical():
             with Horizontal(classes="top-bar"):
                 yield Button("Refresh", id="refresh_button", classes="toolbar_button")
-                yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
-                yield Button("Add", id="add_button", classes="toolbar_button")
-                yield Button("Logs", id="logs_button", classes="toolbar_button right_side")
+                # yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
+                yield Button("Add", id="add_button", classes="toolbar_button right_side")
+                # yield Button("Logs", id="logs_button", classes="toolbar_button right_side")
 
             yield Horizontal(
                 Label("Project Name", classes="header name"),

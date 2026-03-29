@@ -1,0 +1,10 @@
+ReleaseNotesView {
+    align: center middle;
+}
+
+ReleaseNotesView > VerticalScroll {
+    width: 80%;
+    height: 80%;
+    border: double white;
+    border-title-align: center;
+}

@@ -26,12 +26,20 @@ ViewMenu {
     align: left top;
 }
 
-
 #menu_list {
     width: 20;
     height: auto;
     margin-top: 1;
     margin-left: 2;
+    border: solid white;
+    background: blue;
+}
+
+#view_list {
+    width: 20;
+    height: auto;
+    margin-top: 1;
+    margin-left: 10;
     border: solid white;
     background: blue;
 }

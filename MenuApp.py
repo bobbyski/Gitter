@@ -50,7 +50,7 @@ class MenuApp(App):
 
     @on(events.Click, "#view_menu_label")
     def handle_view_click(self) -> None:
-        logs_visible = self.logWindow.display
+        logs_visible = self.project.heightClass == "project_view_split_height"
         self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
 
     def on_view_menu_result(self, result: str) -> None:

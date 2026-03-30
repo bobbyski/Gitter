@@ -26,11 +26,16 @@ class MenuApp(App):
         # ("^f", "show_file_menu", "File Menu"),
     ]
 
+    def app_container_class(self):
+        return f"project_view {self.heightClass}"
+
     def compose(self) -> ComposeResult:
+        self.app_classes = self.app_container_class()
+
         self.project = ProjectView()
         self.logWindow = RichLogWindow()
         self.releaseNootesWindow = ReleaseNotesView( self.releaseNotesText )
-        self.appWindow = Container(self.project, self.releaseNootesWindow, classes="app_window")
+        self.appWindow = Container(self.project, self.releaseNootesWindow, classes=f"app_window {self.app_container_class()}")
 
         yield Header()
         yield MenuBar()
@@ -51,7 +56,7 @@ class MenuApp(App):
 
     @on(events.Click, "#view_menu_label")
     def handle_view_click(self) -> None:
-        logs_visible = self.project.heightClass == "project_view_split_height"
+        logs_visible = self.heightClass == "project_view_split_height"
         self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
 
     def on_view_menu_result(self, result: str) -> None:
@@ -65,8 +70,15 @@ class MenuApp(App):
         elif result == "Refresh":
             self.post_message(ProjectView.RefreshRequested())
 
+        if self.heightClass == "project_view_full_height":
+            self.heightClass = "project_view_split_height"
+        else:
+            self.heightClass = "project_view_full_height"
+        self.refresh( recompose=True )
+
     def __init__(self):
         super().__init__()
+        self.heightClass = "project_view_full_height"
 
         pathname = str(Path.home() / ".gitter")
 

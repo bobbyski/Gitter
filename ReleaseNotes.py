@@ -1,11 +1,17 @@
 from textual.app import ComposeResult
+from textual.message import Message
 from textual.screen import ModalScreen
 from textual.widgets import Markdown, Static
 from textual.containers import VerticalScroll
 
 
 class ReleaseNotesView(Static):
-    """A modal screen that displays release notes as rendered markdown."""
+
+    class ResizeRequested(Message):
+        def __init__(self, width: str=None, height: str=None):
+            self.width = width
+            self.height = height
+            super().__init__()
 
     CSS_PATH = ["ReleaseNotes.tcss", "project_view.tcss"]
 

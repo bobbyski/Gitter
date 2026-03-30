@@ -25,15 +25,15 @@ class ProjectView(Static):
         super().__init__(*args, **kwargs)
         self.title = MainFileManager.shared.name
         self.projects = MainFileManager.shared.projects
-        self.heightClass = "project_view_full_height"
         self.widthClass = "project_view_split_width"
-        self.classes = self.container_class()
+        self.classes = self.main_container_class()
 
-    def container_class(self):
-        return f"project_view {self.widthClass} {self.heightClass}"
+    def main_container_class(self):
+        return f"project_view {self.widthClass}"
 
     def compose(self) -> ComposeResult:
-        self.classes = self.container_class()
+        self.classes = self.main_container_class()
+
         with Vertical():
             with Horizontal(classes="top-bar"):
                 yield Button("Refresh", id="refresh_button", classes="toolbar_button")
@@ -76,12 +76,12 @@ class ProjectView(Static):
             else:
                 self.widthClass = "project_view_full_width"
             self.refresh(recompose=True)
-        elif event.button.id == "logs_button":
-            if self.heightClass == "project_view_full_height":
-                self.heightClass = "project_view_split_height"
-            else:
-                self.heightClass = "project_view_full_height"
-            self.refresh(recompose=True)
+        # elif event.button.id == "logs_button":
+        #     if self.heightClass == "project_view_full_height":
+        #         self.heightClass = "project_view_split_height"
+        #     else:
+        #         self.heightClass = "project_view_full_height"
+        #     self.refresh(recompose=True)
         elif event.button.id == "add_button":
             # Stub for future add behavior
             pass
@@ -115,7 +115,6 @@ class ProjectView(Static):
     def handle_refresh_requested(self, message: RefreshRequested) -> None:
         """Handle refresh request message."""
         self.update_all()
-
 
     @on(ResizeRequested)
     def handle_view_click(self, message: ResizeRequested) -> None:

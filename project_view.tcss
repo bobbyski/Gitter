@@ -2,6 +2,7 @@ ProjectView {
     background: black;
     border: double white;
     border-title-align: left;
+    height: 100%;
 }
 
 .project_view_full_width {
@@ -82,10 +83,3 @@ ProjectView {
 .middle {
 }
 
-#ReleaseNotesView {
-    background: blue;
-    width: 35%;
-    height: 100%;
-    border: double white;
-    border-title-align: left;
-}

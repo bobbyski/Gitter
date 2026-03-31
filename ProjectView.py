@@ -7,6 +7,7 @@ from textual.containers import VerticalScroll, Horizontal, Vertical
 from BusinessLogic.GitManager import GitManager
 from model.MainFileManager import MainFileManager
 from model.Project import Project
+from ReleaseNotes import ReleaseNotesView
 from rich_log import GitterLogger
 
 
@@ -71,11 +72,9 @@ class ProjectView(Static):
             self.update_all()
             self.refresh_table()
         elif event.button.id == "release_notes_button":
-            if self.widthClass == "project_view_full_width":
-                self.widthClass = "project_view_split_width"
-            else:
-                self.widthClass = "project_view_full_width"
-            self.refresh(recompose=True)
+            # Generate release notes markdown
+            markdown_content = self.generate_release_notes_markdown()
+            GitterLogger.log(f"Markdown content:\n{markdown_content}")
         # elif event.button.id == "logs_button":
         #     if self.heightClass == "project_view_full_height":
         #         self.heightClass = "project_view_split_height"
@@ -127,6 +126,27 @@ class ProjectView(Static):
 
         self.refresh( recompose=True )
         GitterLogger.log( "View menu clicked (ProjectView)" )
+
+    def generate_release_notes_markdown(self) -> str:
+        """Generate markdown content from all project releases."""
+        markdown_lines = ["# Release Notes\n"]
+
+        for project in self.projects:
+            if project.releases:
+                markdown_lines.append(f"## {project.name}\n")
+                for release in project.releases:
+                    markdown_lines.append(f"### {release.name}\n")
+                    if release.issues:
+                        for issue in release.issues:
+                            markdown_lines.append(f"- {issue.title}\n")
+                    else:
+                        markdown_lines.append("- No issues listed\n")
+                    markdown_lines.append("\n")
+
+        if len(markdown_lines) == 1:
+            markdown_lines.append("No releases found.\n")
+
+        return "".join(markdown_lines)
 
 class ProjectApp(App):
     CSS_PATH = "project_view.tcss"

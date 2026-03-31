@@ -1,7 +1,9 @@
 ReleaseNotesView {
-    background: black;
+    background: blue;
+    width: 35%;
+    height: 100%;
     border: double white;
-    border-title-align: left;
+    border-title-align: left
 }
 
 ReleaseNotesView > VerticalScroll {

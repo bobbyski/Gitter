@@ -2,7 +2,7 @@ from pathlib import Path
 
 from textual import on, events
 from textual.app import App, ComposeResult
-from textual.containers import Container
+from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Label
 
 from BusinessLogic.GitManager import GitManager
@@ -35,7 +35,7 @@ class MenuApp(App):
         self.project = ProjectView()
         self.logWindow = RichLogWindow()
         self.releaseNootesWindow = ReleaseNotesView( self.releaseNotesText )
-        self.appWindow = Container(self.project, self.releaseNootesWindow, classes=f"app_window {self.app_container_class()}")
+        self.appWindow = Horizontal(self.project, self.releaseNootesWindow, classes=f"app_window {self.app_container_class()}")
 
         yield Header()
         yield MenuBar()

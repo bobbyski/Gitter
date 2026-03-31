@@ -19,7 +19,7 @@ from rich_log import RichLogWindow
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
-    CSS_PATH = ["menu_app.tcss", "project_view.tcss"]
+    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss"]
 
     BINDINGS = [
         ("^q", "quit", "Quit"),

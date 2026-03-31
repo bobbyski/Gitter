@@ -32,10 +32,9 @@ class MenuApp(App):
 
     def compose(self) -> ComposeResult:
 
-        self.app_classes = self.app_container_class()
-
         self.project = ProjectView()
         self.logWindow = RichLogWindow()
+        self.update_markdown()
         self.releaseNootesWindow = ReleaseNotesView( self.releaseNotesText )
         self.appWindow = Horizontal(self.project, self.releaseNootesWindow, classes=f"app_window {self.app_container_class()}")
 
@@ -78,6 +77,12 @@ class MenuApp(App):
             self.heightClass = "project_view_full_height"
         self.refresh( recompose=True )
 
+    def update_markdown(self) -> None:
+        if self.project.selected_project is not None:
+            self.releaseNotesText = self.generate_markdown( self.project.selected_project )
+        else:
+            self.releaseNotesText = self.generate_release_notes_markdown()
+
     def generate_markdown(self, project ) -> str:
         markdown_lines = ["# Release Notes\n"]
 
@@ -89,7 +94,7 @@ class MenuApp(App):
                 if release.issues:
                     for issue in release.issues:
                         if issue.number:
-                            markdown_lines.append(f"### [{issue.number}]({issue.url})\n")
+                            markdown_lines.append(f"### {issue.number}\n")
                         markdown_lines.append(f"{issue.title}\n")
 
                 markdown_lines.append("\n")
@@ -103,21 +108,22 @@ class MenuApp(App):
     def generate_release_notes_markdown(self) -> str:
         markdown_lines = ["# Release Notes\n"]
 
-        for project in self.projects:
+        if self.project.projects is None:
+            return ""
+
+        for project in self.project.projects:
             if project.releases:
-                markdown_lines.append(f"## {project.name}\n\n")
-                for release in project.releases:
-                    markdown_lines.append(f"### {release.name}\n")
+                if len( project.issues_list() ) > 0:
+                    markdown_lines.append(f"## {project.name}\n\n")
+                    for release in project.releases:
 
-                    if release.issues:
-                        for issue in release.issues:
-                            if issue.number:
-                                markdown_lines.append(f"** [{issue.number}]({issue.url}) **\n")
-                            markdown_lines.append(f"{issue.title}\n\n")
-                    markdown_lines.append("\n")
-
-        if len(markdown_lines) == 1:
-            markdown_lines.append("No releases found.\n")
+                        if release.issues:
+                            markdown_lines.append(f"### {release.name}\n")
+                            for issue in release.issues:
+                                if issue.number:
+                                    markdown_lines.append(f"**{issue.number}**\n")
+                                markdown_lines.append(f"{issue.title}\n")
+                        markdown_lines.append("\n")
 
         return "".join(markdown_lines)
 
@@ -132,6 +138,9 @@ class MenuApp(App):
         
         Release notes text
         """
+
+        self.project = ProjectView()
+        self.logWindow = RichLogWindow()
 
         # MainFileManager.shared = MainFile("untitled")
         # MainFileManager.shared.setupSampleData()

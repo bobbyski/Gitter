@@ -90,6 +90,14 @@ class Project:
 
         return result
 
+    def issues_list(self):
+        result: list[Issue] = []
+
+        for release in self.releases:
+            for issue in release.issues:
+                result.append(issue.number)
+
+        return result
 
     def issues_string_for_release(self, releaseName: str = "", delimiter = ", "):
         result = ""

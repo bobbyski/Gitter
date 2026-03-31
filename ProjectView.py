@@ -3,6 +3,8 @@ from textual.app import App, ComposeResult
 from textual.message import Message
 from textual.widgets import Static, Label, Button, RichLog
 from textual.containers import VerticalScroll, Horizontal, Vertical
+
+from ReleaseNotes import ReleaseNotesView
 from model.MainFileManager import MainFileManager
 from rich_log import GitterLogger
 
@@ -76,6 +78,8 @@ class ProjectView(Static):
                 return
             widget = widget.parent
 
+        self.app.query_one(ProjectView).refresh(recompose=True)
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         GitterLogger.log(f"Button pressed: {event.button.id}")
         if event.button.id == "refresh_button":
@@ -118,7 +122,9 @@ class ProjectView(Static):
             # GitterLogger.log( f"*****************************\nProject {project.name}\n*****************************" )
             # GitterLogger.log( project.releases )
 
-        self.refresh( recompose=True )
+        #self.refresh( recompose=True )
+        self.app.query_one(ProjectView).refresh(recompose=True)
+        self.app.query_one(ReleaseNotesView).refresh(recompose=True)
 
     @on(RefreshRequested)
     def handle_refresh_requested(self, message: RefreshRequested) -> None:

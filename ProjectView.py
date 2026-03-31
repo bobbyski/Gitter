@@ -3,11 +3,7 @@ from textual.app import App, ComposeResult
 from textual.message import Message
 from textual.widgets import Static, Label, Button, RichLog
 from textual.containers import VerticalScroll, Horizontal, Vertical
-
-from BusinessLogic.GitManager import GitManager
 from model.MainFileManager import MainFileManager
-from model.Project import Project
-from ReleaseNotes import ReleaseNotesView
 from rich_log import GitterLogger
 
 
@@ -28,6 +24,7 @@ class ProjectView(Static):
         self.projects = MainFileManager.shared.projects
         self.widthClass = "project_view_split_width"
         self.classes = self.main_container_class()
+        self.selected_project = None
 
     def main_container_class(self):
         return f"project_view {self.widthClass}"
@@ -51,13 +48,14 @@ class ProjectView(Static):
             )
 
             with VerticalScroll(id="project_list"):
-                for project in self.projects:
+                for i, project in enumerate(self.projects):
                     row = Horizontal(
                         Label(project.name, classes="name"),
                         Label(project.directory, classes="directory"),
                         Label(f"{project.status}", classes="status"),
                         Label(f"{project.issues_string_for_release()}", classes="issues_list"),
-                        classes="row"
+                        classes="row",
+                        id=f"project_row_{i}"
                     )
                     row.can_focus = True
                     yield row
@@ -65,6 +63,18 @@ class ProjectView(Static):
     def on_mount(self) -> None:
         self.border_title = self.title
         self.set_interval(90, self.update_all)
+
+    @on(events.Click)
+    def on_row_click(self, event: events.Click) -> None:
+        widget = event.control
+        while widget is not None and widget is not self:
+            if widget.id and widget.id.startswith("project_row_"):
+                index = int(widget.id.split("_")[-1])
+                self.selected_project = self.projects[index]
+                GitterLogger.log(f"Selected project: {self.selected_project.name}")
+                GitterLogger.log( self.selected_project )
+                return
+            widget = widget.parent
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         GitterLogger.log(f"Button pressed: {event.button.id}")

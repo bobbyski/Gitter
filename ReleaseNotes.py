@@ -20,9 +20,11 @@ class ReleaseNotesView(Static):
         self.markdown_content = markdown_content
         self.title_text = title
 
+    def on_mount(self) -> None:
+        self.border_title = self.title_text
+
     def compose(self) -> ComposeResult:
-        with VerticalScroll() as scroll:
-            scroll.border_title = self.title_text
+        with VerticalScroll():
             yield Markdown(self.markdown_content)
 
     def on_click(self) -> None:

@@ -11,6 +11,7 @@ from MenuBar import MenuBar
 from ProjectView import ProjectView
 from ReleaseNotes import ReleaseNotesView
 from ViewMenu import ViewMenu
+from model.Issue import Issue
 from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
 from rich_log import RichLogWindow
@@ -19,7 +20,7 @@ from rich_log import RichLogWindow
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
-    CSS_PATH = ["menu_app.tcss", "project_view.tcss"]
+    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss"]
 
     BINDINGS = [
         ("^q", "quit", "Quit"),
@@ -30,6 +31,7 @@ class MenuApp(App):
         return f"project_view {self.heightClass}"
 
     def compose(self) -> ComposeResult:
+
         self.app_classes = self.app_container_class()
 
         self.project = ProjectView()
@@ -75,6 +77,49 @@ class MenuApp(App):
         else:
             self.heightClass = "project_view_full_height"
         self.refresh( recompose=True )
+
+    def generate_markdown(self, project ) -> str:
+        markdown_lines = ["# Release Notes\n"]
+
+        if project.releases:
+            markdown_lines.append(f"# {project.name}\n")
+            for release in project.releases:
+                markdown_lines.append(f"## {release.name}\n\n")
+
+                if release.issues:
+                    for issue in release.issues:
+                        if issue.number:
+                            markdown_lines.append(f"### [{issue.number}]({issue.url})\n")
+                        markdown_lines.append(f"{issue.title}\n")
+
+                markdown_lines.append("\n")
+
+        if len(markdown_lines) == 1:
+            markdown_lines.append("No releases found.\n")
+
+        return "".join(markdown_lines)
+
+
+    def generate_release_notes_markdown(self) -> str:
+        markdown_lines = ["# Release Notes\n"]
+
+        for project in self.projects:
+            if project.releases:
+                markdown_lines.append(f"## {project.name}\n\n")
+                for release in project.releases:
+                    markdown_lines.append(f"### {release.name}\n")
+
+                    if release.issues:
+                        for issue in release.issues:
+                            if issue.number:
+                                markdown_lines.append(f"** [{issue.number}]({issue.url}) **\n")
+                            markdown_lines.append(f"{issue.title}\n\n")
+                    markdown_lines.append("\n")
+
+        if len(markdown_lines) == 1:
+            markdown_lines.append("No releases found.\n")
+
+        return "".join(markdown_lines)
 
     def __init__(self):
         super().__init__()

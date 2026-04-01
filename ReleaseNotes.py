@@ -1,22 +1,30 @@
 from textual.app import ComposeResult
+from textual.message import Message
 from textual.screen import ModalScreen
-from textual.widgets import Markdown
+from textual.widgets import Markdown, Static
 from textual.containers import VerticalScroll
 
 
-class ReleaseNotesView(ModalScreen):
-    """A modal screen that displays release notes as rendered markdown."""
+class ReleaseNotesView(Static):
 
-    CSS_PATH = "ReleaseNotes.tcss"
+    class ResizeRequested(Message):
+        def __init__(self, width: str=None, height: str=None):
+            self.width = width
+            self.height = height
+            super().__init__()
+
+    CSS_PATH = ["ReleaseNotes.tcss", "project_view.tcss"]
 
     def __init__(self, markdown_content: str, title: str = "Release Notes"):
         super().__init__()
         self.markdown_content = markdown_content
         self.title_text = title
 
+    def on_mount(self) -> None:
+        self.border_title = self.title_text
+
     def compose(self) -> ComposeResult:
-        with VerticalScroll() as scroll:
-            scroll.border_title = self.title_text
+        with VerticalScroll():
             yield Markdown(self.markdown_content)
 
     def on_click(self) -> None:

@@ -4,9 +4,8 @@ from textual.message import Message
 from textual.widgets import Static, Label, Button, RichLog
 from textual.containers import VerticalScroll, Horizontal, Vertical
 
-from BusinessLogic.GitManager import GitManager
+from ReleaseNotes import ReleaseNotesView
 from model.MainFileManager import MainFileManager
-from model.Project import Project
 from rich_log import GitterLogger
 
 
@@ -21,23 +20,29 @@ class ProjectView(Static):
             self.height = height
             super().__init__()
 
+    class ProjectSelected(Message):
+        def __init__(self, project):
+            self.project = project
+            super().__init__()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title = MainFileManager.shared.name
         self.projects = MainFileManager.shared.projects
-        self.heightClass = "project_view_full_height"
-        self.widthClass = "project_view_full_width"
-        self.classes = self.container_class()
+        self.widthClass = "project_view_split_width"
+        self.classes = self.main_container_class()
+        self.selected_project = None
 
-    def container_class(self):
-        return f"project_view {self.widthClass} {self.heightClass}"
+    def main_container_class(self):
+        return f"project_view {self.widthClass}"
 
     def compose(self) -> ComposeResult:
-        self.classes = self.container_class()
+        self.classes = self.main_container_class()
+
         with Vertical():
             with Horizontal(classes="top-bar"):
                 yield Button("Refresh", id="refresh_button", classes="toolbar_button")
-                # yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
+                yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
                 yield Button("Add", id="add_button", classes="toolbar_button right_side")
                 # yield Button("Logs", id="logs_button", classes="toolbar_button right_side")
 
@@ -50,13 +55,14 @@ class ProjectView(Static):
             )
 
             with VerticalScroll(id="project_list"):
-                for project in self.projects:
+                for i, project in enumerate(self.projects):
                     row = Horizontal(
                         Label(project.name, classes="name"),
                         Label(project.directory, classes="directory"),
                         Label(f"{project.status}", classes="status"),
                         Label(f"{project.issues_string_for_release()}", classes="issues_list"),
-                        classes="row"
+                        classes="row",
+                        id=f"project_row_{i}"
                     )
                     row.can_focus = True
                     yield row
@@ -65,23 +71,33 @@ class ProjectView(Static):
         self.border_title = self.title
         self.set_interval(90, self.update_all)
 
+    @on(events.Click)
+    def on_row_click(self, event: events.Click) -> None:
+        widget = event.control
+        while widget is not None and widget is not self:
+            if widget.id and widget.id.startswith("project_row_"):
+                index = int(widget.id.split("_")[-1])
+                self.selected_project = self.projects[index]
+                GitterLogger.log(f"Selected project: {self.selected_project.name}")
+                self.post_message(ProjectView.ProjectSelected(self.selected_project))
+                return
+            widget = widget.parent
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        # GitterLogger.log(f"Button pressed: {event.button.id}")
+        GitterLogger.log(f"Button pressed: {event.button.id}")
         if event.button.id == "refresh_button":
             self.update_all()
             self.refresh_table()
         elif event.button.id == "release_notes_button":
-            if self.widthClass == "project_view_full_width":
-                self.widthClass = "project_view_split_width"
-            else:
-                self.widthClass = "project_view_full_width"
-            self.refresh(recompose=True)
-        elif event.button.id == "logs_button":
-            if self.heightClass == "project_view_full_height":
-                self.heightClass = "project_view_split_height"
-            else:
-                self.heightClass = "project_view_full_height"
-            self.refresh(recompose=True)
+            # Generate release notes markdown
+            markdown_content = self.generate_release_notes_markdown()
+            GitterLogger.log(f"Markdown content:\n{markdown_content}")
+        # elif event.button.id == "logs_button":
+        #     if self.heightClass == "project_view_full_height":
+        #         self.heightClass = "project_view_split_height"
+        #     else:
+        #         self.heightClass = "project_view_full_height"
+        #     self.refresh(recompose=True)
         elif event.button.id == "add_button":
             # Stub for future add behavior
             pass
@@ -109,13 +125,14 @@ class ProjectView(Static):
             # GitterLogger.log( f"*****************************\nProject {project.name}\n*****************************" )
             # GitterLogger.log( project.releases )
 
-        self.refresh( recompose=True )
+        #self.refresh( recompose=True )
+        self.app.query_one(ProjectView).refresh(recompose=True)
+        self.app.query_one(ReleaseNotesView).refresh(recompose=True)
 
     @on(RefreshRequested)
     def handle_refresh_requested(self, message: RefreshRequested) -> None:
         """Handle refresh request message."""
         self.update_all()
-
 
     @on(ResizeRequested)
     def handle_view_click(self, message: ResizeRequested) -> None:
@@ -128,6 +145,27 @@ class ProjectView(Static):
 
         self.refresh( recompose=True )
         GitterLogger.log( "View menu clicked (ProjectView)" )
+
+    def generate_release_notes_markdown(self) -> str:
+        """Generate markdown content from all project releases."""
+        markdown_lines = ["# Release Notes\n"]
+
+        for project in self.projects:
+            if project.releases:
+                markdown_lines.append(f"## {project.name}\n")
+                for release in project.releases:
+                    markdown_lines.append(f"### {release.name}\n")
+                    if release.issues:
+                        for issue in release.issues:
+                            markdown_lines.append(f"- {issue.title}\n")
+                    else:
+                        markdown_lines.append("- No issues listed\n")
+                    markdown_lines.append("\n")
+
+        if len(markdown_lines) == 1:
+            markdown_lines.append("No releases found.\n")
+
+        return "".join(markdown_lines)
 
 class ProjectApp(App):
     CSS_PATH = "project_view.tcss"

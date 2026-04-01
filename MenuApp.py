@@ -2,14 +2,16 @@ from pathlib import Path
 
 from textual import on, events
 from textual.app import App, ComposeResult
-from textual.containers import Container
-from textual.widgets import Header, Footer, Label
+from textual.containers import Container, Horizontal
+from textual.widgets import Header, Footer, Label, Markdown
 
 from BusinessLogic.GitManager import GitManager
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
+from ReleaseNotes import ReleaseNotesView
 from ViewMenu import ViewMenu
+from model.Issue import Issue
 from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
 from rich_log import RichLogWindow
@@ -18,22 +20,27 @@ from rich_log import RichLogWindow
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
-    CSS_PATH = ["menu_app.tcss", "project_view.tcss"]
+    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss"]
 
     BINDINGS = [
         ("^q", "quit", "Quit"),
         # ("^f", "show_file_menu", "File Menu"),
     ]
 
+    def app_container_class(self):
+        return f"project_view {self.heightClass}"
+
     def compose(self) -> ComposeResult:
+
         self.project = ProjectView()
         self.logWindow = RichLogWindow()
+        # self.update_markdown()
+        self.releaseNotesWindow = ReleaseNotesView( self.releaseNotesText )
+        self.appWindow = Horizontal(self.project, self.releaseNotesWindow, classes=f"app_window {self.app_container_class()}")
 
         yield Header()
         yield MenuBar()
-        self.mainContainer = Container( self.project, self.logWindow, classes="main_container", id="main_container")
-        # self.mainContainer = Container( self.logWindow, self.project, classes="main_container", id="main_container")
-        # self.mainContainer = Container( self.logWindow, classes="main_container", id="main_container")
+        self.mainContainer = Container( self.appWindow, self.logWindow, classes="main_container", id="main_container")
         yield self.mainContainer
         yield Footer()
 
@@ -50,7 +57,7 @@ class MenuApp(App):
 
     @on(events.Click, "#view_menu_label")
     def handle_view_click(self) -> None:
-        logs_visible = self.project.heightClass == "project_view_split_height"
+        logs_visible = self.heightClass == "project_view_split_height"
         self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
 
     def on_view_menu_result(self, result: str) -> None:
@@ -64,10 +71,89 @@ class MenuApp(App):
         elif result == "Refresh":
             self.post_message(ProjectView.RefreshRequested())
 
+        if self.heightClass == "project_view_full_height":
+            self.heightClass = "project_view_split_height"
+        else:
+            self.heightClass = "project_view_full_height"
+        self.refresh( recompose=True )
+
+    @on(ProjectView.ProjectSelected)
+    def on_project_selected(self, message: ProjectView.ProjectSelected) -> None:
+        self.project.selected_project = message.project
+        self.update_markdown()
+        # self.refresh(recompose=True)
+
+    def update_markdown(self) -> None:
+        # if self.releaseNotesWindow.markdown_content != self.lastMarkdown:
+        if self.project.selected_project is not None:
+            self.releaseNotesText = self.generate_markdown( self.project.selected_project )
+        else:
+            self.releaseNotesText = self.generate_release_notes_markdown()
+
+        self.releaseNotesWindow.markdown_content = self.releaseNotesText
+        self.lastMarkdown = self.releaseNotesText
+        self.releaseNotesWindow.query_one(Markdown).update(self.releaseNotesText)
+        # self.refresh( recompose=True )
+
+    def generate_markdown(self, project ) -> str:
+        markdown_lines = ["# Release Notes\n"]
+
+        if project.releases:
+            markdown_lines.append(f"# {project.name}\n")
+            for release in project.releases:
+                markdown_lines.append(f"## {release.name}\n\n")
+
+                if release.issues:
+                    for issue in release.issues:
+                        if issue.number:
+                            markdown_lines.append(f"#### {issue.number} \n")
+                        markdown_lines.append(f"{issue.title}\n")
+
+                markdown_lines.append("\n")
+
+        if len(markdown_lines) == 1:
+            markdown_lines.append("No releases found.\n")
+
+        return "".join(markdown_lines)
+
+
+    def generate_release_notes_markdown(self) -> str:
+        markdown_lines = ["# Release Notes\n"]
+
+        if self.project.projects is None:
+            return ""
+
+        for project in self.project.projects:
+            if project.releases:
+                if len( project.issues_list() ) > 0:
+                    markdown_lines.append(f"## {project.name}\n\n")
+                    for release in project.releases:
+
+                        if release.issues:
+                            markdown_lines.append(f"### {release.name}\n")
+                            for issue in release.issues:
+                                if issue.number:
+                                    markdown_lines.append(f"**{issue.number}**\n")
+                                markdown_lines.append(f"{issue.title}\n")
+                        markdown_lines.append("\n")
+
+        return "".join(markdown_lines)
+
     def __init__(self):
         super().__init__()
+        self.heightClass = "project_view_full_height"
+        self.lastMarkdown = "qwerty"
 
         pathname = str(Path.home() / ".gitter")
+
+        self.releaseNotesText = """
+        # Release Notes
+        
+        Release notes text
+        """
+
+        self.project = ProjectView()
+        self.logWindow = RichLogWindow()
 
         # MainFileManager.shared = MainFile("untitled")
         # MainFileManager.shared.setupSampleData()

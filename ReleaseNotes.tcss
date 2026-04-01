@@ -1,0 +1,12 @@
+ReleaseNotesView {
+    background: black;
+    width: 35%;
+    height: 100%;
+    border: double white;
+    border-title-align: left
+}
+
+ReleaseNotesView > VerticalScroll {
+    width: 100%;
+    height: 100%;
+}

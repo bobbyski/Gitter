@@ -20,6 +20,11 @@ class ProjectView(Static):
             self.height = height
             super().__init__()
 
+    class ProjectSelected(Message):
+        def __init__(self, project):
+            self.project = project
+            super().__init__()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.title = MainFileManager.shared.name
@@ -74,11 +79,9 @@ class ProjectView(Static):
                 index = int(widget.id.split("_")[-1])
                 self.selected_project = self.projects[index]
                 GitterLogger.log(f"Selected project: {self.selected_project.name}")
-                GitterLogger.log( self.selected_project )
+                self.post_message(ProjectView.ProjectSelected(self.selected_project))
                 return
             widget = widget.parent
-
-        self.app.query_one(ProjectView).refresh(recompose=True)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         GitterLogger.log(f"Button pressed: {event.button.id}")

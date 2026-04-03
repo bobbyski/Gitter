@@ -119,3 +119,16 @@ class Project:
 
         return ""
 
+    def next_release_issues(self):
+        return self.issues_for_release( "Next release" )
+
+    def release_summary(self):
+        result = self.current_release()
+        total = len(self.next_release_issues())
+        if total > 0 and result !="":
+            result += f" + {len(self.next_release_issues())} issue"
+            if total > 1:
+                result += "s"
+
+        return result
+

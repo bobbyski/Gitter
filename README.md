@@ -3,7 +3,9 @@
 A Terminal User Interface (TUI) application built with Python and the [Textual](https://github.com/Textualize/textual) framework. Gitter provides a menu-driven interface for viewing and managing projects.
 
 #### NOTE:
-This is my learn Textual project so it is not good code, but  i Will hopefully have time to clean it up later.
+This is my learn Textual project so it is not good code, but i Will hopefully have time 
+to clean it up later. This is also one of my early python projects so I often fail
+to follow the proper style, but I will try to improve it over time.
 
 ## Features
 

@@ -1,12 +1,4 @@
-import click
-
-
-# @click.group
-# def cli():
-#     pass
-
-@click.command()
-@click.version_option(version='0.0.1')
+import argparse
 
 def show_version(version):
     """Display the version information and exit."""

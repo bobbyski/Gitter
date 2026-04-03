@@ -39,13 +39,28 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     yield first, True, previous_value\
 '''
 class RichLogWindow(Static):
+    queuedLogs = []
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.border_title = "Debug Log"
+        GitterLogger.logView = self
 
     def compose(self) -> ComposeResult:
         GitterLogger.logView = self
         yield RichLog(highlight=True, markup=True)
+
+    def on_mount(self) -> None:
+        # note this code is not yet working - not a priority - will fix later
+        if GitterLogger.logView is not None:
+            try:
+                text_log = self.query_one(RichLog)
+                logs = GitterLogger.queuedLogs
+                GitterLogger.queuedLogs.clear()
+                for message in logs:
+                    text_log.write(message)
+            except Exception:
+                pass
 
     def on_ready(self) -> None:
         """Called  when the DOM is ready."""
@@ -69,15 +84,17 @@ class RichLogWindow(Static):
 
 class GitterLogger:
     logView: RichLogWindow = None
+    queuedLogs = []
 
     @classmethod
     def log(cls, message: RenderableType | object):
         if GitterLogger.logView is None:
-            print(message)
+            GitterLogger.queuedLogs.append(message)
         else:
-            GitterLogger.logView.query_one(RichLog).write(message)
-
-
+            try:
+                GitterLogger.logView.query_one(RichLog).write(message)
+            except Exception:
+                GitterLogger.queuedLogs.append(message)
 
 class RichLogApp(App):
     def compose(self) -> ComposeResult:

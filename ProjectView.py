@@ -40,14 +40,9 @@ class ProjectView(Static):
         self.classes = self.main_container_class()
 
         with Vertical():
-            with Horizontal(classes="top-bar"):
-                yield Button("Refresh", id="refresh_button", classes="toolbar_button")
-                yield Button("Release notes", id="release_notes_button", classes="toolbar_button")
-                yield Button("Add", id="add_button", classes="toolbar_button right_side")
-                # yield Button("Logs", id="logs_button", classes="toolbar_button right_side")
-
             yield Horizontal(
                 Label("Project Name", classes="header name"),
+                Label("Release", classes="header release"),
                 Label("Directory", classes="header directory"),
                 Label("Status", classes="header status"),
                 Label("Next/Last Release", classes="header issues_list"),
@@ -58,6 +53,7 @@ class ProjectView(Static):
                 for i, project in enumerate(self.projects):
                     row = Horizontal(
                         Label(project.name, classes="name"),
+                        Label(f"{project.release_summary()}", classes="release"),
                         Label(project.directory, classes="directory"),
                         Label(f"{project.status}", classes="status"),
                         Label(f"{project.issues_string_for_release()}", classes="issues_list"),
@@ -82,25 +78,6 @@ class ProjectView(Static):
                 self.post_message(ProjectView.ProjectSelected(self.selected_project))
                 return
             widget = widget.parent
-
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        GitterLogger.log(f"Button pressed: {event.button.id}")
-        if event.button.id == "refresh_button":
-            self.update_all()
-            self.refresh_table()
-        elif event.button.id == "release_notes_button":
-            # Generate release notes markdown
-            markdown_content = self.generate_release_notes_markdown()
-            GitterLogger.log(f"Markdown content:\n{markdown_content}")
-        # elif event.button.id == "logs_button":
-        #     if self.heightClass == "project_view_full_height":
-        #         self.heightClass = "project_view_split_height"
-        #     else:
-        #         self.heightClass = "project_view_full_height"
-        #     self.refresh(recompose=True)
-        elif event.button.id == "add_button":
-            # Stub for future add behavior
-            pass
 
     def refresh_table(self) -> None:
         project_list = self.query_one("#project_list", VerticalScroll)
@@ -143,6 +120,7 @@ class ProjectView(Static):
         if message.height:
             self.heightClass = message.height
 
+        self.classes = self.main_container_class()
         self.refresh( recompose=True )
         GitterLogger.log( "View menu clicked (ProjectView)" )
 

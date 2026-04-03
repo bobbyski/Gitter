@@ -16,7 +16,8 @@ class Project:
     tagBranch: str
     issuePrefixes: list[str]
     prPatterns: list[str]
-
+    favorite: bool
+    groups: list[str]
     commits: list[GitLog]
     issues: list[Issue]
     releases: list[Release]
@@ -108,6 +109,26 @@ class Project:
                 result += f"{releaseName}: "
 
         result += delimiter.join( self.issues_for_release(releaseName ))
+
+        return result
+
+    def current_release(self):
+        for release in self.releases:
+            if release.name != "Next release":
+                return release.name
+
+        return ""
+
+    def next_release_issues(self):
+        return self.issues_for_release( "Next release" )
+
+    def release_summary(self):
+        result = self.current_release()
+        total = len(self.next_release_issues())
+        if total > 0 and result !="":
+            result += f" + {len(self.next_release_issues())} issue"
+            if total > 1:
+                result += "s"
 
         return result
 

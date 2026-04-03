@@ -4,16 +4,13 @@ from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Label, Markdown
-
-from BusinessLogic.GitManager import GitManager
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
 from ReleaseNotes import ReleaseNotesView
 from ViewMenu import ViewMenu
-from model.Issue import Issue
-from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
+from model.Release import Release
 from rich_log import RichLogWindow
 
 
@@ -53,29 +50,49 @@ class MenuApp(App):
 
     def action_show_view_menu(self) -> None:
         logs_visible = self.logWindow.display
-        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
+        releasese_visible = self.releaseNotesWindow.display
+        self.push_screen(ViewMenu(logs_visible, releasese_visible), callback=self.on_view_menu_result)
 
     @on(events.Click, "#view_menu_label")
     def handle_view_click(self) -> None:
         logs_visible = self.heightClass == "project_view_split_height"
-        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
+        releasese_visible = self.releaseNotesWindow.display
+        self.push_screen(ViewMenu(logs_visible, releasese_visible ), callback=self.on_view_menu_result)
 
     def on_view_menu_result(self, result: str) -> None:
-        """Handle the result from ViewMenu."""
         if result == "Show logs":
             self.logWindow.display = True
             self.project.post_message(ProjectView.ResizeRequested(height="project_view_split_height"))
+            self.updateHeightClass()
         elif result == "Hide logs":
             self.logWindow.display = False
             self.project.post_message(ProjectView.ResizeRequested(height="project_view_full_height"))
+            self.updateHeightClass()
+        elif result == "Show release notes":
+            self.releaseNotesWindow.display = True
+            self.project.post_message(ProjectView.ResizeRequested(width="project_view_split_width"))
+            self.updateWidthClass()
+        elif result == "Hide release notes":
+            self.releaseNotesWindow.display = False
+            self.project.post_message(ProjectView.ResizeRequested(width="project_view_full_width"))
+            self.updateWidthClass()
         elif result == "Refresh":
             self.post_message(ProjectView.RefreshRequested())
+        self.refresh()
 
+    def updateHeightClass(self):
         if self.heightClass == "project_view_full_height":
             self.heightClass = "project_view_split_height"
         else:
             self.heightClass = "project_view_full_height"
         self.refresh( recompose=True )
+
+    def updateWidthClass(self):
+        if self.widthClass == "project_view_full_width":
+            self.widthClass = "project_view_split_width"
+        else:
+            self.widthClass = "project_view_full_width"
+        self.project.post_message(ProjectView.ResizeRequested(width=self.widthClass))
 
     @on(ProjectView.ProjectSelected)
     def on_project_selected(self, message: ProjectView.ProjectSelected) -> None:
@@ -96,20 +113,28 @@ class MenuApp(App):
         # self.refresh( recompose=True )
 
     def generate_markdown(self, project ) -> str:
-        markdown_lines = ["# Release Notes\n"]
+        markdown_lines = [f"#  {project.name} Release Notes"]
+        current = project.current_release()
+
+        if current != "":
+            markdown_lines.append(f" - version: {current}")
+
+        markdown_lines.append("\n")
 
         if project.releases:
-            markdown_lines.append(f"# {project.name}\n")
             for release in project.releases:
-                markdown_lines.append(f"## {release.name}\n\n")
+                if len( release.issues ) > 0:
+                    markdown_lines.append(f"## {release.name}")
 
-                if release.issues:
-                    for issue in release.issues:
-                        if issue.number:
-                            markdown_lines.append(f"#### {issue.number} \n")
-                        markdown_lines.append(f"{issue.title}\n")
+                    markdown_lines.append( "\n" )
 
-                markdown_lines.append("\n")
+                    if release.issues:
+                        for issue in release.issues:
+                            if issue.number:
+                                markdown_lines.append(f"#### {issue.number} \n")
+                            markdown_lines.append(f"{issue.title}\n")
+
+                    markdown_lines.append("\n")
 
         if len(markdown_lines) == 1:
             markdown_lines.append("No releases found.\n")
@@ -142,6 +167,7 @@ class MenuApp(App):
     def __init__(self):
         super().__init__()
         self.heightClass = "project_view_full_height"
+        self.widthClass = "project_view_full_width"
         self.lastMarkdown = "qwerty"
 
         pathname = str(Path.home() / ".gitter")

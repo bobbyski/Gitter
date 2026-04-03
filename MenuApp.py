@@ -10,6 +10,7 @@ from ProjectView import ProjectView
 from ReleaseNotes import ReleaseNotesView
 from ViewMenu import ViewMenu
 from model.MainFileManager import MainFileManager
+from model.Release import Release
 from rich_log import RichLogWindow
 
 
@@ -112,20 +113,28 @@ class MenuApp(App):
         # self.refresh( recompose=True )
 
     def generate_markdown(self, project ) -> str:
-        markdown_lines = ["# Release Notes\n"]
+        markdown_lines = [f"#  {project.name} Release Notes"]
+        current = project.current_release()
+
+        if current != "":
+            markdown_lines.append(f" - version: {current}")
+
+        markdown_lines.append("\n")
 
         if project.releases:
-            markdown_lines.append(f"# {project.name}\n")
             for release in project.releases:
-                markdown_lines.append(f"## {release.name}\n\n")
+                if len( release.issues ) > 0:
+                    markdown_lines.append(f"## {release.name}")
 
-                if release.issues:
-                    for issue in release.issues:
-                        if issue.number:
-                            markdown_lines.append(f"#### {issue.number} \n")
-                        markdown_lines.append(f"{issue.title}\n")
+                    markdown_lines.append( "\n" )
 
-                markdown_lines.append("\n")
+                    if release.issues:
+                        for issue in release.issues:
+                            if issue.number:
+                                markdown_lines.append(f"#### {issue.number} \n")
+                            markdown_lines.append(f"{issue.title}\n")
+
+                    markdown_lines.append("\n")
 
         if len(markdown_lines) == 1:
             markdown_lines.append("No releases found.\n")

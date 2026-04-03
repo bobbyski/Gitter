@@ -112,3 +112,10 @@ class Project:
 
         return result
 
+    def current_release(self):
+        for release in self.releases:
+            if release.name != "Next release":
+                return release.name
+
+        return ""
+

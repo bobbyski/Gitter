@@ -18,7 +18,6 @@ class Project:
     prPatterns: list[str]
     favorite: bool
     groups: list[str]
-
     commits: list[GitLog]
     issues: list[Issue]
     releases: list[Release]

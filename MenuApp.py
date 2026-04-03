@@ -84,6 +84,7 @@ class MenuApp(App):
             self.heightClass = "project_view_split_height"
         else:
             self.heightClass = "project_view_full_height"
+        self.refresh( recompose=True )
 
     def updateWidthClass(self):
         if self.widthClass == "project_view_full_width":

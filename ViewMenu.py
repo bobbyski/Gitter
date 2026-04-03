@@ -9,7 +9,7 @@ class ViewMenu(ModalScreen[str]):
     def __init__(self, logs_visible: bool, releasese_visible: bool):
         super().__init__()
         self._logs_label = "Hide logs" if logs_visible else "Show logs"
-        self._releasenotes_label = "Hide release notes" if releasese_visible else "Show release notes"
+        self._releasenotes_label = "Show release notes" if releasese_visible else "Hide release notes"
 
     def compose(self) -> ComposeResult:
         yield OptionList(

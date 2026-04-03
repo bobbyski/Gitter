@@ -2,7 +2,7 @@ ReleaseNotesView {
     background: black;
     width: 35%;
     height: 100%;
-    border: double white;
+    border: solid white;
     border-title-align: left
 }
 

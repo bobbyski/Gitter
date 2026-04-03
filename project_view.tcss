@@ -1,6 +1,6 @@
 ProjectView {
     background: black;
-    border: double white;
+    border: solid white;
     border-title-align: left;
     height: 100%;
 }

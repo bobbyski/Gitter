@@ -4,15 +4,11 @@ from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Label, Markdown
-
-from BusinessLogic.GitManager import GitManager
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
 from ReleaseNotes import ReleaseNotesView
 from ViewMenu import ViewMenu
-from model.Issue import Issue
-from model.MainFile import MainFile
 from model.MainFileManager import MainFileManager
 from rich_log import RichLogWindow
 
@@ -53,29 +49,48 @@ class MenuApp(App):
 
     def action_show_view_menu(self) -> None:
         logs_visible = self.logWindow.display
-        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
+        releasese_visible = self.releaseNotesWindow.display
+        self.push_screen(ViewMenu(logs_visible, releasese_visible), callback=self.on_view_menu_result)
 
     @on(events.Click, "#view_menu_label")
     def handle_view_click(self) -> None:
         logs_visible = self.heightClass == "project_view_split_height"
-        self.push_screen(ViewMenu(logs_visible), callback=self.on_view_menu_result)
+        releasese_visible = self.releaseNotesWindow.display
+        self.push_screen(ViewMenu(logs_visible, releasese_visible ), callback=self.on_view_menu_result)
 
     def on_view_menu_result(self, result: str) -> None:
-        """Handle the result from ViewMenu."""
         if result == "Show logs":
             self.logWindow.display = True
             self.project.post_message(ProjectView.ResizeRequested(height="project_view_split_height"))
+            self.updateHeightClass()
         elif result == "Hide logs":
             self.logWindow.display = False
             self.project.post_message(ProjectView.ResizeRequested(height="project_view_full_height"))
+            self.updateHeightClass()
+        elif result == "Show release notes":
+            self.releaseNotesWindow.display = True
+            self.project.post_message(ProjectView.ResizeRequested(width="project_view_split_width"))
+            self.updateWidthClass()
+        elif result == "Hide release notes":
+            self.releaseNotesWindow.display = False
+            self.project.post_message(ProjectView.ResizeRequested(width="project_view_full_width"))
+            self.updateWidthClass()
         elif result == "Refresh":
             self.post_message(ProjectView.RefreshRequested())
+        self.refresh()
 
+    def updateHeightClass(self):
         if self.heightClass == "project_view_full_height":
             self.heightClass = "project_view_split_height"
         else:
             self.heightClass = "project_view_full_height"
-        self.refresh( recompose=True )
+
+    def updateWidthClass(self):
+        if self.widthClass == "project_view_full_width":
+            self.widthClass = "project_view_split_width"
+        else:
+            self.widthClass = "project_view_full_width"
+        self.project.post_message(ProjectView.ResizeRequested(width=self.widthClass))
 
     @on(ProjectView.ProjectSelected)
     def on_project_selected(self, message: ProjectView.ProjectSelected) -> None:
@@ -142,6 +157,7 @@ class MenuApp(App):
     def __init__(self):
         super().__init__()
         self.heightClass = "project_view_full_height"
+        self.widthClass = "project_view_full_width"
         self.lastMarkdown = "qwerty"
 
         pathname = str(Path.home() / ".gitter")

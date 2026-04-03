@@ -143,6 +143,7 @@ class ProjectView(Static):
         if message.height:
             self.heightClass = message.height
 
+        self.classes = self.main_container_class()
         self.refresh( recompose=True )
         GitterLogger.log( "View menu clicked (ProjectView)" )
 

@@ -33,7 +33,9 @@ class MainFileManager:
                      project_data.get("prPatterns", [] ),
                      project_data.get("commits", [] ),
                      project_data.get("issues", [] ),
-                     project_data.get("releases", [] )
+                     project_data.get("releases", [] ),
+                     project_data.get("groups", [] ),
+                     project_data.get("favorite", False )
                      )
             for project_data in data.get("projects", [])
         ]

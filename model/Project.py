@@ -16,6 +16,8 @@ class Project:
     tagBranch: str
     issuePrefixes: list[str]
     prPatterns: list[str]
+    favorite: bool
+    groups: list[str]
 
     commits: list[GitLog]
     issues: list[Issue]

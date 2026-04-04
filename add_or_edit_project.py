@@ -1,15 +1,51 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Optional
 
 from textual import on
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
-from textual.widgets import Button, Checkbox, Input, Label, Static
+from textual.widgets import Button, Checkbox, DirectoryTree, Input, Label, Static
 from textual.containers import Horizontal, Vertical
 
 from model.Project import Project
 from model.GitLog import GitLog
+
+
+class DirectoryPickerModal(ModalScreen[Optional[str]]):
+    """A modal that lets the user pick a directory using DirectoryTree."""
+
+    def __init__(self, start_path: str = ""):
+        super().__init__()
+        self._start = Path(start_path).expanduser() if start_path else Path.home()
+        if not self._start.is_dir():
+            self._start = Path.home()
+
+    def compose(self) -> ComposeResult:
+        yield Vertical(
+            Label("Select Directory", id="picker_title"),
+            DirectoryTree(str(self._start), id="dir_tree"),
+            Horizontal(
+                Button("Cancel", variant="default", id="picker_cancel"),
+                Button("Select", variant="primary", id="picker_select"),
+                id="picker_button_row",
+            ),
+            id="picker_container",
+        )
+
+    @on(DirectoryTree.DirectorySelected)
+    def handle_dir_selected(self, event: DirectoryTree.DirectorySelected) -> None:
+        self._selected = str(event.path)
+
+    @on(Button.Pressed, "#picker_cancel")
+    def handle_cancel(self) -> None:
+        self.dismiss(None)
+
+    @on(Button.Pressed, "#picker_select")
+    def handle_select(self) -> None:
+        selected = getattr(self, "_selected", None)
+        self.dismiss(selected)
 
 
 class AddOrEditProject(ModalScreen[Optional[Project]]):
@@ -29,7 +65,11 @@ class AddOrEditProject(ModalScreen[Optional[Project]]):
             Label("Name"),
             Input(value=p.name if p else "", placeholder="Project name", id="input_name"),
             Label("Directory"),
-            Input(value=p.directory if p else "", placeholder="/path/to/repo", id="input_directory"),
+            Horizontal(
+                Input(value=p.directory if p else "", placeholder="/path/to/repo", id="input_directory"),
+                Button("Browse", variant="default", id="btn_browse"),
+                id="directory_row",
+            ),
             Label("Tag Branch"),
             Input(value=p.tagBranch if p else "", placeholder="main", id="input_tag_branch"),
             Label("Issue Prefixes  (comma-separated)"),
@@ -87,6 +127,14 @@ class AddOrEditProject(ModalScreen[Optional[Project]]):
     # ------------------------------------------------------------------
     # Event handlers
     # ------------------------------------------------------------------
+
+    @on(Button.Pressed, "#btn_browse")
+    def handle_browse(self) -> None:
+        current = self.query_one("#input_directory", Input).value.strip()
+        def on_picked(path: str | None) -> None:
+            if path:
+                self.query_one("#input_directory", Input).value = path
+        self.app.push_screen(DirectoryPickerModal(current), callback=on_picked)
 
     @on(Button.Pressed, "#btn_cancel")
     def handle_cancel(self) -> None:

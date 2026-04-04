@@ -37,3 +37,49 @@ AddOrEditProject Checkbox {
 #btn_cancel {
     margin-right: 1;
 }
+
+#directory_row {
+    height: auto;
+}
+
+#directory_row Input {
+    width: 1fr;
+}
+
+#directory_row #btn_browse {
+    width: auto;
+    margin-left: 1;
+}
+
+DirectoryPickerModal {
+    align: center middle;
+}
+
+#picker_container {
+    background: $surface;
+    border: solid $primary;
+    padding: 1 2;
+    width: 60;
+    height: 30;
+}
+
+#picker_title {
+    text-style: bold;
+    margin-bottom: 1;
+    color: $primary;
+}
+
+#dir_tree {
+    height: 1fr;
+    border: solid $primary-darken-2;
+}
+
+#picker_button_row {
+    margin-top: 1;
+    align-horizontal: right;
+    height: auto;
+}
+
+#picker_cancel {
+    margin-right: 1;
+}

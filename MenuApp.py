@@ -25,6 +25,7 @@ class MenuApp(App):
         ("ctrl+q", "quit", "Quit"),
         ("ctrl+a", "add_project", "Add Project"),
         ("ctrl+e", "edit_project", "Edit Project"),
+        ("ctrl+d", "delete_project", "Delete Project"),
         ("ctrl+l", "show_log", "Show Log"),
         ("ctrl+r", "show_release_notes", "Show Release Notes"),
         ("ctrl+f", "show_file_menu", "File Menu"),
@@ -58,6 +59,15 @@ class MenuApp(App):
         if self.project.selected_project is None:
             return
         self.push_screen(AddOrEditProject(self.project.selected_project), callback=self.project.on_project_edited)
+
+    def action_delete_project(self) -> None:
+        if self.project.selected_project is None:
+            return
+        MainFileManager.shared.remove_project(self.project.selected_project)
+        self.project.projects = MainFileManager.shared.projects
+        self.project.selected_project = None
+        self.project.refresh(recompose=True)
+        MainFileManager.save_shared_to_json(str(Path.home() / ".gitter"))
 
     @on(events.Click, "#file_menu_label")
     def handle_file_click(self) -> None:
@@ -115,10 +125,14 @@ class MenuApp(App):
             self.releaseNotesWindow.display = True
             self.project.post_message(ProjectView.ResizeRequested(width="project_view_split_width"))
             self.updateWidthClass()
+            self.releaseNotesWindow.visible = True
+            self.refresh( recompose=True)
         elif result == "Hide release notes":
             self.releaseNotesWindow.display = False
             self.project.post_message(ProjectView.ResizeRequested(width="project_view_full_width"))
             self.updateWidthClass()
+            self.releaseNotesWindow.visible = False
+            self.refresh( recompose=True)
         elif result == "Refresh":
             self.post_message(ProjectView.RefreshRequested())
         self.refresh()

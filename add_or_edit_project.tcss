@@ -5,9 +5,10 @@ AddOrEditProject {
 #modal_container {
     background: $surface;
     border: solid $primary;
+    border-title-align: center;
     padding: 1 2;
-    width: 60;
-    height: auto;
+    width: 80;
+    height: 25;
 }
 
 #modal_title {
@@ -29,8 +30,7 @@ AddOrEditProject Checkbox {
 }
 
 #button_row {
-    margin-top: 2;
-    margin-bottom: 2;
+    margin-top: 1;
     align-horizontal: right;
 }
 
@@ -75,11 +75,15 @@ DirectoryPickerModal {
 }
 
 #picker_button_row {
-    margin-top: 1;
     align-horizontal: right;
-    height: auto;
+    align-vertical: bottom;
+    height: 3;
 }
 
 #picker_cancel {
     margin-right: 1;
+}
+
+#scroll_container {
+    height: 17;
 }

@@ -55,20 +55,20 @@ class MenuApp(App):
             self.add_project()
 
     def add_project(self) -> None:
-        blank = Project(
-            name="",
-            directory="",
-            status="",
-            tagBranch="",
-            issuePrefixes=[],
-            prPatterns=[],
-            favorite=False,
-            groups=[],
-            commits=[],
-            issues=[],
-            releases=[],
-        )
-        self.push_screen(AddOrEditProject(blank), callback=self.on_project_added)
+        # blank = Project(
+        #     name="",
+        #     directory="",
+        #     status="",
+        #     tagBranch="",
+        #     issuePrefixes=[],
+        #     prPatterns=[],
+        #     favorite=False,
+        #     groups=[],
+        #     commits=[],
+        #     issues=[],
+        #     releases=[],
+        # )
+        self.push_screen(AddOrEditProject(None), callback=self.on_project_added)
 
     def on_project_added(self, project: Project ) -> None:
         if project is None:

@@ -7,7 +7,7 @@ from textual import on
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Button, Checkbox, DirectoryTree, Input, Label, Static
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, Vertical, VerticalScroll
 
 from model.Project import Project
 from model.GitLog import GitLog
@@ -62,40 +62,44 @@ class AddOrEditProject(ModalScreen[Optional[Project]]):
     def __init__(self, project: Project ):
         super().__init__()
         self._project = project
+        self.border_title = "Add Project" if project is None else "Edit Project"
 
     def compose(self) -> ComposeResult:
         p = self._project
         yield Vertical(
-            Label("Edit Project" if p else "Add Project", id="modal_title"),
-            Label("Name"),
-            Input(value=p.name if p else "", placeholder="Project name", id="input_name"),
-            Label("Directory"),
-            Horizontal(
-                Input(value=p.directory if p else "", placeholder="/path/to/repo", id="input_directory"),
-                Button("Browse", variant="default", id="btn_browse"),
-                id="directory_row",
+            # Label("Edit Project" if p else "Add Project", id="modal_title"),
+            VerticalScroll (
+                Label("Name"),
+                Input(value=p.name if p else "", placeholder="Project name", id="input_name"),
+                Label("Directory"),
+                Horizontal(
+                    Input(value=p.directory if p else "", placeholder="/path/to/repo", id="input_directory"),
+                    Button("Browse", variant="default", id="btn_browse"),
+                    id="directory_row",
+                ),
+                Label("Tag Branch"),
+                Input(value=p.tagBranch if p else "", placeholder="main", id="input_tag_branch"),
+                Label("Issue Prefixes  (comma-separated)"),
+                Input(
+                    value=", ".join(p.issuePrefixes) if p else "",
+                    placeholder="GIT, PROJ",
+                    id="input_issue_prefixes",
+                ),
+                Label("PR Patterns  (comma-separated)"),
+                Input(
+                    value=", ".join(p.prPatterns) if p else "",
+                    placeholder="#(\\d+)",
+                    id="input_pr_patterns",
+                ),
+                Label("Groups  (comma-separated)"),
+                Input(
+                    value=", ".join(p.groups) if p else "",
+                    placeholder="backend, infra",
+                    id="input_groups",
+                ),
+                Checkbox("Favorite", value=p.favorite if p else False, id="input_favorite"),
+                id="scroll_container"
             ),
-            Label("Tag Branch"),
-            Input(value=p.tagBranch if p else "", placeholder="main", id="input_tag_branch"),
-            Label("Issue Prefixes  (comma-separated)"),
-            Input(
-                value=", ".join(p.issuePrefixes) if p else "",
-                placeholder="GIT, PROJ",
-                id="input_issue_prefixes",
-            ),
-            Label("PR Patterns  (comma-separated)"),
-            Input(
-                value=", ".join(p.prPatterns) if p else "",
-                placeholder="#(\\d+)",
-                id="input_pr_patterns",
-            ),
-            Label("Groups  (comma-separated)"),
-            Input(
-                value=", ".join(p.groups) if p else "",
-                placeholder="backend, infra",
-                id="input_groups",
-            ),
-            Checkbox("Favorite", value=p.favorite if p else False, id="input_favorite"),
             Horizontal(
                 Button("Cancel", variant="default", id="btn_cancel"),
                 Button("Save", variant="primary", id="btn_save"),

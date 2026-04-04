@@ -50,7 +50,7 @@ def issues(project_name=None):
     table.add_column("Project", style="bold cyan", no_wrap=True)
     table.add_column("Release", no_wrap=True)
     table.add_column("Issue", style="cyan", no_wrap=True)
-    table.add_column("Title")
+    table.add_column("Commit Summary" )
 
     first_project = True
     for project in MainFileManager.shared.projects:

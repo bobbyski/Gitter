@@ -6,9 +6,9 @@ from textual.screen import ModalScreen
 from rich_log import GitterLogger
 
 
-class FileMenu(ModalScreen):
+class FileMenu(ModalScreen[str]):
     """A modal screen that displays a popup 'File' menu."""
-    
+
     def compose(self) -> ComposeResult:
         yield OptionList(
             "New",
@@ -21,10 +21,11 @@ class FileMenu(ModalScreen):
 
     @on(OptionList.OptionSelected)
     def handle_option_selected(self, event: OptionList.OptionSelected) -> None:
-        if str(event.option.prompt) == "Quit":
+        option = str(event.option.prompt)
+        if option == "Quit":
             self.app.exit()
-        # else:
-        #     self.dismiss()
+        else:
+            self.dismiss(option)
 
     def on_click(self) -> None:
         # Close the menu if clicked outside

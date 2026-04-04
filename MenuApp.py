@@ -4,12 +4,14 @@ from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Label, Markdown
+from add_or_edit_project import AddOrEditProject
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
 from ReleaseNotes import ReleaseNotesView
 from ViewMenu import ViewMenu
 from model.MainFileManager import MainFileManager
+from model.Project import Project
 from model.Release import Release
 from rich_log import RichLogWindow
 
@@ -17,7 +19,7 @@ from rich_log import RichLogWindow
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
-    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss"]
+    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss", "add_or_edit_project.tcss"]
 
     BINDINGS = [
         ("^q", "quit", "Quit"),
@@ -42,11 +44,40 @@ class MenuApp(App):
         yield Footer()
 
     def action_show_file_menu(self) -> None:
-        self.push_screen(FileMenu())
+        self.push_screen(FileMenu(), callback=self.on_file_menu_result)
 
     @on(events.Click, "#file_menu_label")
     def handle_file_click(self) -> None:
-        self.push_screen(FileMenu())
+        self.push_screen(FileMenu(), callback=self.on_file_menu_result)
+
+    def on_file_menu_result(self, result: str) -> None:
+        if result == "New":
+            self.add_project()
+
+    def add_project(self) -> None:
+        blank = Project(
+            name="",
+            directory="",
+            status="",
+            tagBranch="",
+            issuePrefixes=[],
+            prPatterns=[],
+            favorite=False,
+            groups=[],
+            commits=[],
+            issues=[],
+            releases=[],
+        )
+        self.push_screen(AddOrEditProject(blank), callback=self.on_project_added)
+
+    def on_project_added(self, project: Project ) -> None:
+        if project is None:
+            return
+        MainFileManager.shared.add_project(project)
+        self.project.projects = MainFileManager.shared.projects
+        self.project.refresh(recompose=True)
+
+        MainFileManager.save_shared_to_json(str(Path.home() / ".gitter"))
 
     def action_show_view_menu(self) -> None:
         logs_visible = self.logWindow.display

@@ -1,6 +1,5 @@
 import json
 from dataclasses import asdict
-
 from model.MainFile import MainFile
 from model.Project import Project
 

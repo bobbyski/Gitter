@@ -1,0 +1,38 @@
+AddOrEditProject {
+    align: center middle;
+}
+
+#modal_container {
+    background: $surface;
+    border: solid $primary;
+    padding: 1 2;
+    width: 60;
+    height: auto;
+}
+
+#modal_title {
+    text-style: bold;
+    margin-bottom: 1;
+    color: $primary;
+}
+
+AddOrEditProject Label {
+    margin-top: 1;
+}
+
+AddOrEditProject Input {
+    margin-bottom: 0;
+}
+
+AddOrEditProject Checkbox {
+    margin-top: 1;
+}
+
+#button_row {
+    margin-top: 2;
+    align-horizontal: right;
+}
+
+#btn_cancel {
+    margin-right: 1;
+}

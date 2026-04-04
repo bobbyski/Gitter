@@ -61,21 +61,32 @@ def issues(project_name=None):
         if not releases_with_issues:
             continue
 
-        if not first_project:
-            table.add_row("", "", "", "")
         first_project = False
 
-        project_rows = 0
+        SEP = Text("─" * 30, style="dim")
+
+        rows = []
         for i, release in enumerate(releases_with_issues):
+            if i > 0:
+                rows.append(("sep", None, None))
             release_label = Text(release.name, style="bold magenta" if release.name == "Next release" else "bold yellow")
             for j, issue in enumerate(release.issues):
+                rows.append((release_label if j == 0 else Text(""), issue.number, issue.title))
+
+        project_shown = False
+        for k, (release_cell, number, title) in enumerate(rows):
+            is_last = k == len(rows) - 1
+            if release_cell == "sep":
+                table.add_row(Text(""), SEP, SEP, SEP)
+            else:
                 table.add_row(
-                    Text(project.name, style="bold cyan") if project_rows == 0 else Text(""),
-                    release_label if j == 0 else Text(""),
-                    issue.number,
-                    issue.title,
+                    Text(project.name, style="bold cyan") if not project_shown else Text(""),
+                    release_cell,
+                    number,
+                    title,
+                    end_section=is_last,
                 )
-                project_rows += 1
+                project_shown = True
 
     console.print(table)
 

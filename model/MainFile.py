@@ -14,6 +14,12 @@ class MainFile:
         self.projects.append(project)
         self.sort_projects()
 
+    def update_project(self, project):
+        if project in self.projects:
+            index = self.projects.index(project)
+            self.projects[index] = project
+        self.sort_projects()
+
     def remove_project(self, project):
         if project in self.projects:
             self.projects.remove(project)

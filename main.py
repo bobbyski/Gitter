@@ -7,7 +7,6 @@ from model.MainFileManager import MainFileManager
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
-from rich.panel import Panel
 from rich.text import Text
 
 def build_parser():
@@ -47,7 +46,13 @@ def status():
 
 def issues(project_name=None):
     console = Console()
+    table = Table(title="Issues", show_header=True, header_style="bold")
+    table.add_column("Project", style="bold cyan", no_wrap=True)
+    table.add_column("Release", no_wrap=True)
+    table.add_column("Issue", style="cyan", no_wrap=True)
+    table.add_column("Title")
 
+    first_project = True
     for project in MainFileManager.shared.projects:
         if project_name is not None and project.name != project_name:
             continue
@@ -56,23 +61,23 @@ def issues(project_name=None):
         if not releases_with_issues:
             continue
 
-        table = Table(show_header=True, header_style="bold", box=None, padding=(0, 1))
-        table.add_column("Release", style="bold magenta", no_wrap=True)
-        table.add_column("Issue", style="cyan", no_wrap=True)
-        table.add_column("Title")
+        if not first_project:
+            table.add_row("", "", "", "")
+        first_project = False
 
+        project_rows = 0
         for i, release in enumerate(releases_with_issues):
             release_label = Text(release.name, style="bold magenta" if release.name == "Next release" else "bold yellow")
             for j, issue in enumerate(release.issues):
                 table.add_row(
+                    Text(project.name, style="bold cyan") if project_rows == 0 else Text(""),
                     release_label if j == 0 else Text(""),
                     issue.number,
                     issue.title,
                 )
-            if i < len(releases_with_issues) - 1:
-                table.add_row("", "", "")
+                project_rows += 1
 
-        console.print(Panel(table, title=f"[bold cyan]{project.name}[/bold cyan]", expand=False))
+    console.print(table)
 
 
 if __name__ == '__main__':

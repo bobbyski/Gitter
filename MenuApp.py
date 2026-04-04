@@ -22,13 +22,13 @@ class MenuApp(App):
     CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss", "add_or_edit_project.tcss"]
 
     BINDINGS = [
-        ("^q", "quit", "Quit"),
-        ("^a", "add_project", "Add Project"),
-        ("^e", "edit_project", "Edit Project"),
-        ("^l", "show_log", "Show Log"),
-        ("^r", "show_release_notes", "Show Release Notes"),
-        ("^f", "show_file_menu", "File Menu"),
-        ("^v", "show_view_menu", "View Menu"),
+        ("ctrl+q", "quit", "Quit"),
+        ("ctrl+a", "add_project", "Add Project"),
+        ("ctrl+e", "edit_project", "Edit Project"),
+        ("ctrl+l", "show_log", "Show Log"),
+        ("ctrl+r", "show_release_notes", "Show Release Notes"),
+        ("ctrl+f", "show_file_menu", "File Menu"),
+        ("ctrl+v", "show_view_menu", "View Menu"),
     ]
 
     def app_container_class(self):
@@ -78,6 +78,18 @@ class MenuApp(App):
         self.project.refresh(recompose=True)
 
         MainFileManager.save_shared_to_json(str(Path.home() / ".gitter"))
+
+    def action_show_log(self) -> None:
+        if self.logWindow.display:
+            self.on_view_menu_result("Hide logs")
+        else:
+            self.on_view_menu_result("Show logs")
+
+    def action_show_release_notes(self) -> None:
+        if self.releaseNotesWindow.display:
+            self.on_view_menu_result("Hide release notes")
+        else:
+            self.on_view_menu_result("Show release notes")
 
     def action_show_view_menu(self) -> None:
         logs_visible = self.logWindow.display

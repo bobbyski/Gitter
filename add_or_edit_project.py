@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional
 
 from textual import on
 from textual.app import ComposeResult
@@ -11,6 +11,11 @@ from textual.containers import Horizontal, Vertical
 
 from model.Project import Project
 from model.GitLog import GitLog
+
+
+class VisibleDirectoryTree(DirectoryTree):
+    def filter_paths(self, paths: Iterable[Path]) -> Iterable[Path]:
+        return [p for p in paths if not p.name.startswith(".")]
 
 
 class DirectoryPickerModal(ModalScreen[Optional[str]]):
@@ -25,7 +30,7 @@ class DirectoryPickerModal(ModalScreen[Optional[str]]):
     def compose(self) -> ComposeResult:
         yield Vertical(
             Label("Select Directory", id="picker_title"),
-            DirectoryTree(str(self._start), id="dir_tree"),
+            VisibleDirectoryTree(str(self._start), id="dir_tree"),
             Horizontal(
                 Button("Cancel", variant="default", id="picker_cancel"),
                 Button("Select", variant="primary", id="picker_select"),

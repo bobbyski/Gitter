@@ -1,0 +1,89 @@
+AddOrEditProject {
+    align: center middle;
+}
+
+#modal_container {
+    background: $surface;
+    border: solid $primary;
+    border-title-align: center;
+    padding: 1 2;
+    width: 80;
+    height: 25;
+}
+
+#modal_title {
+    text-style: bold;
+    margin-bottom: 1;
+    color: $primary;
+}
+
+AddOrEditProject Label {
+    margin-top: 1;
+}
+
+AddOrEditProject Input {
+    margin-bottom: 0;
+}
+
+AddOrEditProject Checkbox {
+    margin-top: 1;
+}
+
+#button_row {
+    margin-top: 1;
+    align-horizontal: right;
+}
+
+#btn_cancel {
+    margin-right: 1;
+}
+
+#directory_row {
+    height: auto;
+}
+
+#directory_row Input {
+    width: 1fr;
+}
+
+#directory_row #btn_browse {
+    width: auto;
+    margin-left: 1;
+}
+
+DirectoryPickerModal {
+    align: center middle;
+}
+
+#picker_container {
+    background: $surface;
+    border: solid $primary;
+    padding: 1 2;
+    width: 60;
+    height: 30;
+}
+
+#picker_title {
+    text-style: bold;
+    margin-bottom: 1;
+    color: $primary;
+}
+
+#dir_tree {
+    height: 1fr;
+    border: solid $primary-darken-2;
+}
+
+#picker_button_row {
+    align-horizontal: right;
+    align-vertical: bottom;
+    height: 3;
+}
+
+#picker_cancel {
+    margin-right: 1;
+}
+
+#scroll_container {
+    height: 17;
+}

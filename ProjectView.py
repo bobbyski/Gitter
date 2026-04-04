@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from textual import on, events
 from textual.app import App, ComposeResult
 from textual.message import Message
@@ -5,6 +7,8 @@ from textual.widgets import Static, Label, Button, RichLog
 from textual.containers import VerticalScroll, Horizontal, Vertical
 
 from ReleaseNotes import ReleaseNotesView
+from add_or_edit_project import AddOrEditProject
+from model import Project
 from model.MainFileManager import MainFileManager
 from rich_log import GitterLogger
 
@@ -74,10 +78,26 @@ class ProjectView(Static):
             if widget.id and widget.id.startswith("project_row_"):
                 index = int(widget.id.split("_")[-1])
                 self.selected_project = self.projects[index]
-                GitterLogger.log(f"Selected project: {self.selected_project.name}")
-                self.post_message(ProjectView.ProjectSelected(self.selected_project))
+                if event.chain == 1:
+                    GitterLogger.log(f"Selected project: {self.selected_project.name}")
+                    self.post_message(ProjectView.ProjectSelected(self.selected_project))
+                elif event.chain == 2:
+                    self.app.push_screen(AddOrEditProject(self.selected_project), callback=self.on_project_edited)
                 return
             widget = widget.parent
+
+
+    def on_project_edited(self, project: Project ) -> None:
+        if project is None:
+            return
+        for i, p in enumerate(self.projects):
+            if p.name == self.selected_project.name:
+                self.projects[i] = project
+                break
+        MainFileManager.shared.projects = self.projects
+        self.refresh(recompose=True)
+
+        MainFileManager.save_shared_to_json(str(Path.home() / ".gitter"))
 
     def refresh_table(self) -> None:
         project_list = self.query_one("#project_list", VerticalScroll)

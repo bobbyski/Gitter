@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from rich.text import Text
 
 @dataclass
 class GitStatus:
@@ -31,6 +32,44 @@ class GitStatus:
         self.filesDeleted = []
         self.filesUntracked = []
         self.state = ""
+
+    def to_rich(self) -> Text:
+        text = Text()
+
+        if self.state != "":
+            text.append(self.state, style="green")
+
+        if len(self.filesAdded) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"new: {len(self.filesAdded)}", style="green")
+
+        if len(self.filesModified) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"mod: {len(self.filesModified)}", style="yellow")
+
+        if len(self.filesDeleted) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"del: {len(self.filesDeleted)}", style="red")
+
+        if len(self.filesUntracked) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"ut: {len(self.filesUntracked)}")
+
+        if len(text) > 0:
+            text.append(" ")
+
+        if self.branch != "":
+            text.append("on ")
+            if self.branch == "develop" or self.branch == "main" or self.branch == "master":
+                text.append(f"{self.branch}", style="dim")
+            else:
+                text.append(f"{self.branch}", style="blue")
+
+        return text
 
     def __repr__(self):
         result = ""

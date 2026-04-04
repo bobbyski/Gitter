@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
+
+import rich_log
 from model.MainFileManager import MainFileManager
 from pathlib import Path
 from rich.console import Console
@@ -12,6 +14,7 @@ def build_parser():
     subparsers = parser.add_subparsers(title='commands', dest='command', required=True)
     subparsers.add_parser('status', help='Show status of all projects')
     subparsers.add_parser('tui', help='Open TUI viewer')
+    subparsers.add_parser('issues', help='Show issues for all projects')
     subparsers.add_parser('version', help='show version information')
 
     return parser
@@ -20,7 +23,6 @@ def show_version(version):
     """Display the version information and exit."""
     print(f"Version {version}")
     exit(0)
-
 
 def status():
     table = Table(title="Projects")
@@ -34,17 +36,29 @@ def status():
         table.add_row(
             project.name,
             project.directory,
-            str(project.status),
+            project.status.to_rich(),
             project.current_release(),
             project.issues_string_for_release(),
         )
 
     Console().print(table)
 
+def issues( project_name = None ):
+    print("Issues:")
+
+    for project in MainFileManager.shared.projects:
+        if project_name == None or project.name == project_name:
+            print(f"***** {project.name} *****")
+            if len( project.releases ) > 0:
+                for release in project.releases:
+                    if len( release.issues ) > 0:
+                        print( f"----- {release.name} -----")
+                        for issue in release.issues:
+                            print( f"{project.name} | {release.name} | {issue.number} | {issue.title}")
+
+
 if __name__ == '__main__':
     parser = build_parser()
-
-    # print(parser.parse_args())
 
     if parser.parse_args().command == 'tui':
         from MenuApp import MenuApp
@@ -61,5 +75,6 @@ if __name__ == '__main__':
 
         if parser.parse_args().command == 'status':
             status()
+        elif parser.parse_args().command == 'issues':
+            issues()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

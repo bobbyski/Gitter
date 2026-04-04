@@ -23,7 +23,12 @@ class MenuApp(App):
 
     BINDINGS = [
         ("^q", "quit", "Quit"),
-        # ("^f", "show_file_menu", "File Menu"),
+        ("^a", "add_project", "Add Project"),
+        ("^e", "edit_project", "Edit Project"),
+        ("^l", "show_log", "Show Log"),
+        ("^r", "show_release_notes", "Show Release Notes"),
+        ("^f", "show_file_menu", "File Menu"),
+        ("^v", "show_view_menu", "View Menu"),
     ]
 
     def app_container_class(self):
@@ -45,6 +50,14 @@ class MenuApp(App):
 
     def action_show_file_menu(self) -> None:
         self.push_screen(FileMenu(), callback=self.on_file_menu_result)
+
+    def action_add_project(self) -> None:
+        self.push_screen(AddOrEditProject(None), callback=self.on_project_added)
+
+    def action_edit_project(self) -> None:
+        if self.project.selected_project is None:
+            return
+        self.push_screen(AddOrEditProject(self.project.selected_project), callback=self.project.on_project_edited)
 
     @on(events.Click, "#file_menu_label")
     def handle_file_click(self) -> None:

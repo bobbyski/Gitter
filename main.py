@@ -7,6 +7,8 @@ from model.MainFileManager import MainFileManager
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
+from rich.panel import Panel
+from rich.text import Text
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Git Repository Manager')
@@ -43,18 +45,34 @@ def status():
 
     Console().print(table)
 
-def issues( project_name = None ):
-    print("Issues:")
+def issues(project_name=None):
+    console = Console()
 
     for project in MainFileManager.shared.projects:
-        if project_name == None or project.name == project_name:
-            print(f"***** {project.name} *****")
-            if len( project.releases ) > 0:
-                for release in project.releases:
-                    if len( release.issues ) > 0:
-                        print( f"----- {release.name} -----")
-                        for issue in release.issues:
-                            print( f"{project.name} | {release.name} | {issue.number} | {issue.title}")
+        if project_name is not None and project.name != project_name:
+            continue
+
+        releases_with_issues = [r for r in project.releases if len(r.issues) > 0]
+        if not releases_with_issues:
+            continue
+
+        table = Table(show_header=True, header_style="bold", box=None, padding=(0, 1))
+        table.add_column("Release", style="bold magenta", no_wrap=True)
+        table.add_column("Issue", style="cyan", no_wrap=True)
+        table.add_column("Title")
+
+        for i, release in enumerate(releases_with_issues):
+            release_label = Text(release.name, style="bold magenta" if release.name == "Next release" else "bold yellow")
+            for j, issue in enumerate(release.issues):
+                table.add_row(
+                    release_label if j == 0 else Text(""),
+                    issue.number,
+                    issue.title,
+                )
+            if i < len(releases_with_issues) - 1:
+                table.add_row("", "", "")
+
+        console.print(Panel(table, title=f"[bold cyan]{project.name}[/bold cyan]", expand=False))
 
 
 if __name__ == '__main__':

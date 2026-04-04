@@ -30,6 +30,7 @@ AddOrEditProject Checkbox {
 
 #button_row {
     margin-top: 2;
+    margin-bottom: 2;
     align-horizontal: right;
 }
 

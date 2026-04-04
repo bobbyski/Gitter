@@ -3,19 +3,22 @@ from dataclasses import asdict
 from model.MainFile import MainFile
 from model.Project import Project
 
+EXCLUDED_PROJECT_FIELDS = {"commits", "issues", "releases", "status"}
 
 class MainFileManager:
     shared = MainFile("untitled")
 
     @classmethod
     def save_shared_to_json(cls, path: str):
-        data = {
-            "name": cls.shared.name,
-            "projects": [asdict(project) for project in cls.shared.projects],
-        }
+        output = MainFile(MainFileManager.shared.name)
+
+        for project in MainFileManager.shared.projects:
+            node = Project(project.name, project.directory, "", project.tagBranch, project.issuePrefixes, project.prPatterns, project.favorite, [],[],[],[] )
+            node.favorite = project.favorite
+            output.add_project(node)
 
         with open(path, "w", encoding="utf-8") as file:
-            json.dump(data, file, indent=2)
+            json.dump( asdict( output ), file, indent=2)
 
     @classmethod
     def load_shared_from_json(cls, path: str):
@@ -24,18 +27,19 @@ class MainFileManager:
 
         loaded = MainFile(data.get("name", "untitled"))
         loaded.projects = [
-            Project( project_data.get("name", ""),
-                     project_data.get("directory", ""),
-                     project_data.get("status", ""),
-                     project_data.get("tagBranch", "master"),
-                     project_data.get("issuePrefixes", [] ),
-                     project_data.get("prPatterns", [] ),
-                     project_data.get("commits", [] ),
-                     project_data.get("issues", [] ),
-                     project_data.get("releases", [] ),
-                     project_data.get("groups", [] ),
-                     project_data.get("favorite", False )
-                     )
+            Project(
+                name=project_data.get("name", ""),
+                directory=project_data.get("directory", ""),
+                status="",
+                tagBranch=project_data.get("tagBranch", "master"),
+                issuePrefixes=project_data.get("issuePrefixes", []),
+                prPatterns=project_data.get("prPatterns", []),
+                favorite=project_data.get("favorite", False),
+                groups=project_data.get("groups", []),
+                commits=[],
+                issues=[],
+                releases=[],
+            )
             for project_data in data.get("projects", [])
         ]
 

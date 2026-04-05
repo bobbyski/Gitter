@@ -132,3 +132,61 @@ class Project:
 
         return result
 
+    def release_notes_markdown( self ) -> str:
+        markdown_lines = [f"#  {self.name} Release Notes"]
+        current = self.current_release()
+
+        if current != "":
+            markdown_lines.append(f" - version: {current}")
+
+        markdown_lines.append("\n")
+
+        if self.releases:
+            for release in self.releases:
+                if len( release.issues ) > 0:
+                    markdown_lines.append(f"## {release.name}")
+
+                    markdown_lines.append( "\n" )
+
+                    if release.issues:
+                        for issue in release.issues:
+                            if issue.number:
+                                markdown_lines.append(f"#### {issue.number} \n")
+                            markdown_lines.append(f"{issue.title}\n")
+
+                    markdown_lines.append("\n")
+
+        if len(markdown_lines) == 1:
+            markdown_lines.append("No releases found.\n")
+
+        return "".join(markdown_lines)
+
+    def release_notes( self ) -> str:
+        markdown_lines = [f"                              {self.name} Release Notes"]
+        current = self.current_release()
+
+        if current != "":
+            markdown_lines.append(f" - version: {current}")
+
+        markdown_lines.append("\n")
+
+        if self.releases:
+            for release in self.releases:
+                if len( release.issues ) > 0:
+                    markdown_lines.append(f"{release.name}")
+
+                    markdown_lines.append( "\n" )
+
+                    if release.issues:
+                        for issue in release.issues:
+                            if issue.number:
+                                markdown_lines.append(f"{issue.number} \n")
+                            markdown_lines.append(f"{issue.title}\n")
+
+                    markdown_lines.append("\n")
+
+        if len(markdown_lines) == 1:
+            markdown_lines.append("No releases found.\n")
+
+        return "".join(markdown_lines)
+

@@ -2,6 +2,8 @@
 
 import argparse
 
+from rich.markdown import Markdown
+
 import rich_log
 from model.MainFileManager import MainFileManager
 from pathlib import Path
@@ -13,13 +15,16 @@ def build_parser():
     parser = argparse.ArgumentParser(description='Git Repository Manager')
 
     subparsers = parser.add_subparsers(title='commands', dest='command', required=True)
-    subparsers.add_parser('status', help='Show status of all projects')
-    subparsers.add_parser('tui', help='Open TUI viewer')
-    subparsers.add_parser('issues', help='Show issues for all projects')
-    subparsers.add_parser('version', help='show version information')
+    subparsers.add_parser('status', help='Show status of all projects', aliases=['Status', 'STATUS'])
+    subparsers.add_parser('tui', help='Open TUI viewer', aliases=['TUI', 'tui'])
+    subparsers.add_parser('issues', help='Show issues for projects', aliases=['Issues', 'ISSUES'])
+    subparsers.add_parser('version', help='show version information', aliases=['Version', 'VERSION'] )
+    subparsers.add_parser('notes', help='Show release notes markdown without formatting', aliases=['Notes', 'NOTES'] )
+    subparsers.add_parser('raw', help='Show release notes markdown without formatting', aliases=['Raw', 'RAW'] )
 
     parser.add_argument( '-p', '--project', type=str, help='Project name to show')
     parser.add_argument( '-r', '--release', type=str, help='The release number to show')
+    parser.add_argument( '-m', '--markdown', action='store_true', help='Show release notes in markdown format')
 
     return parser
 
@@ -97,15 +102,36 @@ def issues(project_name=None, release_name=None):
 
     console.print(table)
 
+
+def notes(project_name=None, release_name=None, markdown=False, raw=False ):
+    console = Console()
+
+    for project in MainFileManager.shared.projects:
+        if project_name is not None and project.name.lower() != project_name.lower():
+            continue
+
+        releases_with_issues = [r for r in project.releases if len(r.issues) > 0]
+        if not releases_with_issues:
+            continue
+
+        if raw:
+            text = project.release_notes_markdown()
+            print(text)
+        elif markdown:
+            markdown = Markdown(project.release_notes_markdown())
+            console.print(markdown)
+        else:
+            console.print(project.release_notes())
+
 if __name__ == '__main__':
     parser = build_parser()
     args = parser.parse_args()
 
-    if parser.parse_args().command == 'tui':
+    if parser.parse_args().command.lower() == 'tui':
         from MenuApp import MenuApp
         app = MenuApp()
         app.run()
-    elif parser.parse_args().command == 'version':
+    elif parser.parse_args().command.lower() == 'version':
         show_version('0.0.8')
     else:
         pathname = str(Path.home() / ".gitter")
@@ -114,8 +140,12 @@ if __name__ == '__main__':
         for project in MainFileManager.shared.projects:
             project.update()
 
-        if parser.parse_args().command == 'status':
+        if parser.parse_args().command.lower() == 'status':
             status()
-        elif parser.parse_args().command == 'issues':
+        elif parser.parse_args().command.lower() == 'issues':
             issues( args.project, args.release )
+        elif parser.parse_args().command.lower() == 'notes':
+            notes( args.project, args.release, markdown=args.markdown, raw=False )
+        elif parser.parse_args().command.lower() == 'raw':
+            notes( args.project, args.release, markdown=False, raw=True )
 

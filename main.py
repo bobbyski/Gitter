@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
-
 from rich.markdown import Markdown
+from pygments.styles import get_all_styles
 
 import rich_log
 from model.MainFileManager import MainFileManager
@@ -12,6 +12,7 @@ from rich.table import Table
 from rich.text import Text
 
 def build_parser():
+    # styles = list(get_all_styles())
     parser = argparse.ArgumentParser(description='Git Repository Manager')
 
     subparsers = parser.add_subparsers(title='commands', dest='command', required=True)
@@ -25,6 +26,8 @@ def build_parser():
     parser.add_argument( '-p', '--project', type=str, help='Project name to show')
     parser.add_argument( '-r', '--release', type=str, help='The release number to show')
     parser.add_argument( '-m', '--markdown', action='store_true', help='Show release notes in markdown format')
+    # parser.add_argument( '-t', '--theme', type=str, help='The theme to use', choices=styles, default='monokai')
+    parser.add_argument( '-t', '--theme', type=str, help='The theme to use', default='monokai')
 
     return parser
 
@@ -103,7 +106,7 @@ def issues(project_name=None, release_name=None):
     console.print(table)
 
 
-def notes(project_name=None, release_name=None, markdown=False, raw=False ):
+def notes(project_name=None, release_name=None, markdown=False, raw=False, code_theme='monokai' ):
     console = Console()
 
     for project in MainFileManager.shared.projects:
@@ -118,7 +121,7 @@ def notes(project_name=None, release_name=None, markdown=False, raw=False ):
             text = project.release_notes_markdown()
             print(text)
         elif markdown:
-            markdown = Markdown(project.release_notes_markdown())
+            markdown = Markdown(project.release_notes_markdown(), code_theme=code_theme)
             console.print(markdown)
         else:
             console.print(project.release_notes())
@@ -145,7 +148,7 @@ if __name__ == '__main__':
         elif parser.parse_args().command.lower() == 'issues':
             issues( args.project, args.release )
         elif parser.parse_args().command.lower() == 'notes':
-            notes( args.project, args.release, markdown=args.markdown, raw=False )
+            notes( args.project, args.release, markdown=args.markdown, raw=False, code_theme=args.theme )
         elif parser.parse_args().command.lower() == 'raw':
             notes( args.project, args.release, markdown=False, raw=True )
 

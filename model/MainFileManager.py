@@ -22,29 +22,33 @@ class MainFileManager:
 
     @classmethod
     def load_shared_from_json(cls, path: str):
-        with open(path, "r", encoding="utf-8") as file:
-            data = json.load(file)
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                data = json.load(file)
 
-        loaded = MainFile(data.get("name", "untitled"))
-        loaded.projects = [
-            Project(
-                name=project_data.get("name", ""),
-                directory=project_data.get("directory", ""),
-                status="",
-                tagBranch=project_data.get("tagBranch", "master"),
-                issuePrefixes=project_data.get("issuePrefixes", []),
-                prPatterns=project_data.get("prPatterns", []),
-                favorite=project_data.get("favorite", False),
-                groups=project_data.get("groups", []),
-                commits=[],
-                issues=[],
-                releases=[],
-            )
-            for project_data in data.get("projects", [])
-        ]
+            loaded = MainFile(data.get("name", "untitled"))
+            loaded.projects = [
+                Project(
+                    name=project_data.get("name", ""),
+                    directory=project_data.get("directory", ""),
+                    status="",
+                    tagBranch=project_data.get("tagBranch", "master"),
+                    issuePrefixes=project_data.get("issuePrefixes", []),
+                    prPatterns=project_data.get("prPatterns", []),
+                    favorite=project_data.get("favorite", False),
+                    groups=project_data.get("groups", []),
+                    commits=[],
+                    issues=[],
+                    releases=[],
+                )
+                for project_data in data.get("projects", [])
+            ]
 
-        cls.shared = loaded
+            cls.shared = loaded
+            loaded.sort_projects()
 
-        loaded.sort_projects()
+        except Exception:
+            loaded = MainFile("untitled")
+
 
         return cls.shared

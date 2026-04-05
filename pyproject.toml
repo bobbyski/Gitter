@@ -4,10 +4,15 @@ version = "0.0.1"
 description = "Add your description here"
 requires-python = ">=3.9"
 dependencies = [
-    "click>=8.1.8",
     "gitstatus>=1.2",
     "kivy>=2.3.1",
     "textual>=8.1.1",
     "textual-dev>=1.8.0",
     "tomli>=2.4.0",
 ]
+
+[project.scripts]
+gitter = "main:main"
+
+[tool.setuptools.packages.find]
+include = ["model*", "BusinessLogic*", "TUI*"]

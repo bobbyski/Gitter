@@ -32,7 +32,7 @@ class GitLog:
                 result.name = tag
                 result.date = self.date
                 # result.commit.append(self)
-            elif re.fullmatch(r"\d+(\.\d+)*", tag):
+            elif re.fullmatch(r"\d+(\.\d+)*[a-zA-Z0-9]*", tag):
                 result = Release()
                 result.name = tag
                 result.date = self.date

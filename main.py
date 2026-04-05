@@ -135,7 +135,7 @@ if __name__ == '__main__':
         app = MenuApp()
         app.run()
     elif parser.parse_args().command.lower() == 'version':
-        show_version('0.0.8')
+        show_version('0.1.0')
     else:
         pathname = str(Path.home() / ".gitter")
         MainFileManager.load_shared_from_json(pathname)

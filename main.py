@@ -78,7 +78,7 @@ def issues(project_name=None, release_name=None):
 
         rows = []
         for i, release in enumerate(releases_with_issues):
-            if release_name is not None and release.name.lower() != release_name.lower():
+            if release_name is not None and release.name.lower().startswith( release_name.lower() ) is False:
                 continue
 
             if i > 0:
@@ -118,13 +118,13 @@ def notes(project_name=None, release_name=None, markdown=False, raw=False, code_
             continue
 
         if raw:
-            text = project.release_notes_markdown()
+            text = project.release_notes_markdown( release_name=release_name )
             print(text)
         elif markdown:
-            markdown = Markdown(project.release_notes_markdown(), code_theme=code_theme)
+            markdown = Markdown(project.release_notes_markdown( release_name=release_name ), code_theme=code_theme)
             console.print(markdown)
         else:
-            console.print(project.release_notes())
+            console.print(project.release_notes( release_name=release_name ))
 
 if __name__ == '__main__':
     parser = build_parser()

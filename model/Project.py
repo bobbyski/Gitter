@@ -132,7 +132,7 @@ class Project:
 
         return result
 
-    def release_notes_markdown( self ) -> str:
+    def release_notes_markdown( self, release_name: str = None ) -> str:
         markdown_lines = [f"#  {self.name} Release Notes"]
         current = self.current_release()
 
@@ -143,6 +143,10 @@ class Project:
 
         if self.releases:
             for release in self.releases:
+
+                if release_name is not None and release.name.lower().startswith(release_name.lower()) is False:
+                    continue
+
                 if len( release.issues ) > 0:
                     markdown_lines.append(f"## {release.name}")
 
@@ -161,7 +165,7 @@ class Project:
 
         return "".join(markdown_lines)
 
-    def release_notes( self ) -> str:
+    def release_notes( self, release_name: str = None ) -> str:
         markdown_lines = [f"                              {self.name} Release Notes"]
         current = self.current_release()
 
@@ -172,6 +176,10 @@ class Project:
 
         if self.releases:
             for release in self.releases:
+
+                if release_name is not None and release.name.lower().startswith(release_name.lower()) is False:
+                    continue
+
                 if len( release.issues ) > 0:
                     markdown_lines.append(f"{release.name}")
 

@@ -18,6 +18,9 @@ def build_parser():
     subparsers.add_parser('issues', help='Show issues for all projects')
     subparsers.add_parser('version', help='show version information')
 
+    parser.add_argument( '-p', '--project', type=str, help='Project name to show')
+    parser.add_argument( '-r', '--release', type=str, help='The release number to show')
+
     return parser
 
 def show_version(version):
@@ -44,7 +47,7 @@ def status():
 
     Console().print(table)
 
-def issues(project_name=None):
+def issues(project_name=None, release_name=None):
     console = Console()
     table = Table(title="Issues", show_header=True, header_style="bold")
     table.add_column("Project", style="bold cyan", no_wrap=True)
@@ -54,7 +57,7 @@ def issues(project_name=None):
 
     first_project = True
     for project in MainFileManager.shared.projects:
-        if project_name is not None and project.name != project_name:
+        if project_name is not None and project.name.lower() != project_name.lower():
             continue
 
         releases_with_issues = [r for r in project.releases if len(r.issues) > 0]
@@ -67,6 +70,9 @@ def issues(project_name=None):
 
         rows = []
         for i, release in enumerate(releases_with_issues):
+            if release_name is not None and release.name.lower() != release_name.lower():
+                continue
+
             if i > 0:
                 rows.append(("sep", None, None))
             release_label = Text(release.name, style="bold magenta" if release.name == "Next release" else "bold yellow")
@@ -77,7 +83,8 @@ def issues(project_name=None):
         for k, (release_cell, number, title) in enumerate(rows):
             is_last = k == len(rows) - 1
             if release_cell == "sep":
-                table.add_row(Text(""), SEP, SEP, SEP)
+                if release_name is None:
+                    table.add_row(Text(""), SEP, SEP, SEP)
             else:
                 table.add_row(
                     Text(project.name, style="bold cyan") if not project_shown else Text(""),
@@ -90,9 +97,9 @@ def issues(project_name=None):
 
     console.print(table)
 
-
 if __name__ == '__main__':
     parser = build_parser()
+    args = parser.parse_args()
 
     if parser.parse_args().command == 'tui':
         from MenuApp import MenuApp
@@ -110,5 +117,5 @@ if __name__ == '__main__':
         if parser.parse_args().command == 'status':
             status()
         elif parser.parse_args().command == 'issues':
-            issues()
+            issues( args.project, args.release )
 

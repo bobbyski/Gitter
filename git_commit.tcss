@@ -16,6 +16,23 @@ GitCommitModal {
     margin-bottom: 1;
 }
 
+#commit_header_row {
+    height: auto;
+    margin-bottom: 1;
+}
+
+#commit_type {
+    width: 14;
+}
+
+#commit_issue {
+    width: 14;
+}
+
+#commit_summary {
+    width: 1fr;
+}
+
 #commit_message {
     height: 1fr;
     border: solid $primary-darken-2;

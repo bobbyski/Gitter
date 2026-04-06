@@ -22,11 +22,12 @@ class GitManager:
 
         return result
 
-    def commit(self, message: str) -> tuple[bool, str]:
-        result = subprocess.run(
-            ["git", "-C", self.repo, "commit", "-am", message],
-            capture_output=True, text=True,
-        )
+    def commit(self, message: str, add_unstaged: bool = False) -> tuple:
+        args = ["git", "-C", self.repo, "commit"]
+        if add_unstaged:
+            args.append("-a")
+        args += ["-m", message]
+        result = subprocess.run(args, capture_output=True, text=True)
         success = result.returncode == 0
         output = result.stdout.strip() or result.stderr.strip()
         return success, output

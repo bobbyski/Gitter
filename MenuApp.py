@@ -70,12 +70,13 @@ class MenuApp(App):
             return
         self.push_screen(GitCommitModal(self.project.selected_project), callback=self.on_commit_result)
 
-    def on_commit_result(self, message: Optional[str]) -> None:
-        if message is None:
+    def on_commit_result(self, result: Optional[tuple]) -> None:
+        if result is None:
             return
+        message, add_unstaged = result
         from BusinessLogic.GitManager import GitManager
         project = self.project.selected_project
-        success, output = GitManager(project.directory).commit(message)
+        success, output = GitManager(project.directory).commit(message, add_unstaged)
         GitterLogger.log(f"Commit {'succeeded' if success else 'failed'}: {output}")
         if success:
             project.update()

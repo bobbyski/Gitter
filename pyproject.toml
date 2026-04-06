@@ -1,7 +1,7 @@
 [project]
 name = "gitter"
-version = "0.0.1"
-description = "Add your description here"
+version = "0.1.2"
+description = "Git repo manager get status of multiple git repos in one place"
 requires-python = ">=3.9"
 dependencies = [
     "gitstatus>=1.2",

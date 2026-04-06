@@ -11,6 +11,9 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
+from toml_helper import TomlHelper
+
+
 def build_parser():
     # styles = list(get_all_styles())
     parser = argparse.ArgumentParser(description='Git Repository Manager')
@@ -33,6 +36,7 @@ def build_parser():
 
 def show_version(version):
     """Display the version information and exit."""
+    version = TomlHelper().get_version()
     print(f"Version {version}")
     exit(0)
 

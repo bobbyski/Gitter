@@ -1,0 +1,32 @@
+GitCommitModal {
+    align: center middle;
+}
+
+#commit_container {
+    background: $surface;
+    border: solid $primary;
+    padding: 1 2;
+    width: 80;
+    height: 24;
+}
+
+#commit_title {
+    text-style: bold;
+    color: $primary;
+    margin-bottom: 1;
+}
+
+#commit_message {
+    height: 1fr;
+    border: solid $primary-darken-2;
+    margin-bottom: 1;
+}
+
+#commit_button_row {
+    height: 3;
+    align-horizontal: right;
+}
+
+#btn_cancel {
+    margin-right: 1;
+}

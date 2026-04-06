@@ -22,6 +22,15 @@ class GitManager:
 
         return result
 
+    def commit(self, message: str) -> tuple[bool, str]:
+        result = subprocess.run(
+            ["git", "-C", self.repo, "commit", "-am", message],
+            capture_output=True, text=True,
+        )
+        success = result.returncode == 0
+        output = result.stdout.strip() or result.stderr.strip()
+        return success, output
+
     def get_logs(self, limit: int = 1000, branch: str = ""):
         # GitterLogger.log( f"**********************************\nGetting logs for branch {branch} at {self.repo}\n**********************************" )
 

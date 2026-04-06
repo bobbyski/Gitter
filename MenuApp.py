@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+from typing import Optional
 
 from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Label, Markdown
 from add_or_edit_project import AddOrEditProject
+from git_commit import GitCommitModal
 from FileMenu import FileMenu
 from MenuBar import MenuBar
 from ProjectView import ProjectView
@@ -15,19 +17,20 @@ from ViewMenu import ViewMenu
 from model.MainFileManager import MainFileManager
 from model.Project import Project
 from model.Release import Release
-from rich_log import RichLogWindow
+from rich_log import GitterLogger, RichLogWindow
 
 
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
-    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss", "add_or_edit_project.tcss"]
+    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss", "add_or_edit_project.tcss", "git_commit.tcss"]
 
     BINDINGS = [
         ("ctrl+q", "quit", "Quit"),
         ("ctrl+a", "add_project", "Add Project"),
         ("ctrl+e", "edit_project", "Edit Project"),
         ("ctrl+d", "delete_project", "Delete Project"),
+        ("ctrl+k", "commit", "Commit"),
         ("ctrl+l", "show_log", "Show Log"),
         ("ctrl+r", "show_release_notes", "Show Release Notes"),
         ("ctrl+f", "show_file_menu", "File Menu"),
@@ -61,6 +64,23 @@ class MenuApp(App):
         if self.project.selected_project is None:
             return
         self.push_screen(AddOrEditProject(self.project.selected_project), callback=self.project.on_project_edited)
+
+    def action_commit(self) -> None:
+        if self.project.selected_project is None:
+            return
+        self.push_screen(GitCommitModal(self.project.selected_project), callback=self.on_commit_result)
+
+    def on_commit_result(self, message: Optional[str]) -> None:
+        if message is None:
+            return
+        from BusinessLogic.GitManager import GitManager
+        project = self.project.selected_project
+        success, output = GitManager(project.directory).commit(message)
+        GitterLogger.log(f"Commit {'succeeded' if success else 'failed'}: {output}")
+        if success:
+            project.update()
+            self.project.refresh(recompose=True)
+            self.update_markdown()
 
     def action_delete_project(self) -> None:
         if self.project.selected_project is None:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Optional
 
 from textual import on
@@ -23,6 +24,39 @@ class GitCommitModal(ModalScreen[CommitResult]):
     def __init__(self, project: Project):
         super().__init__()
         self._project = project
+        self.border_title = "Commit"
+        self.commitType = "feat"
+        self.commitIssue = ""
+        self.commitSummary = ""
+
+        if project is not None and project.status is not None:
+            self.setupDefaults()
+
+    def setupDefaults( self ):
+        elements = self._project.status.branch.split("/")
+
+        if len(elements) > 1:
+            type = elements[0].lower()
+            if type == "feature" or type == "feat":
+                self.commitType = "feat"
+            elif type == "bugfix" or type == "fix":
+                self.commitType = "fix"
+            elif type == "chore":
+                self.commitType = "chore"
+            elif type == "spike":
+                self.commitType = "spike"
+            else:
+                self.commitType = "feat"
+
+            last = elements[-1]
+            issue_match = re.search(r"([A-Za-z]+-\d+)", last)
+            if issue_match:
+                self.commitIssue = issue_match.group(1)
+                after = last[issue_match.end():]
+                after = re.sub(r"^[^A-Za-z0-9]+", "", after)
+                after = re.sub(r"[^A-Za-z0-9]+$", "", after)
+                self.commitSummary = after.replace("_", " ").replace("-", " ")
+
 
     def compose(self) -> ComposeResult:
         yield Vertical(
@@ -30,11 +64,12 @@ class GitCommitModal(ModalScreen[CommitResult]):
             Horizontal(
                 Select(
                     [("feat", "feat"), ("fix", "fix"), ("chore", "chore"), ("spike", "spike")],
+                    value=self.commitType,
                     prompt="type",
                     id="commit_type",
                 ),
-                Input(placeholder="issue", id="commit_issue"),
-                Input(placeholder="summary", id="commit_summary"),
+                Input(value=self.commitIssue, placeholder="issue", id="commit_issue"),
+                Input(value=self.commitSummary, placeholder="summary", id="commit_summary"),
                 Checkbox("add unstaged", value=True, id="commit_add_unstaged"),
                 id="commit_header_row",
             ),
@@ -65,11 +100,11 @@ class GitCommitModal(ModalScreen[CommitResult]):
         if commit_type and commit_type is not Select.BLANK:
             parts.append(f"{commit_type}")
         if issue:
-            parts.append(issue)
+            parts.append( f"({issue})")
         if summary:
-            parts.append(summary)
+            parts.append(f": {summary}")
 
-        first_line = " ".join(parts)
+        first_line = "".join(parts)
         if not first_line:
             return
 

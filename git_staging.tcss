@@ -1,0 +1,48 @@
+GitStagingView {
+    height: 50%;
+    width: 100%;
+}
+
+#staging_container {
+    height: 100%;
+    width: 100%;
+}
+
+#staged_box {
+    height: 1fr;
+    border: solid $primary;
+    border-title-align: left;
+}
+
+#staging_buttons {
+    height: 3;
+    align-horizontal: center;
+    align-vertical: middle;
+    padding: 0 1;
+}
+
+#btn_stage_all {
+    margin-right: 2;
+}
+
+#unstaged_box {
+    height: 1fr;
+    border: solid $primary-darken-2;
+    border-title-align: left;
+}
+
+.staging_row {
+    height: 1;
+    width: 100%;
+}
+
+.staging_state {
+    width: 12;
+    color: $warning;
+    padding-left: 1;
+}
+
+.staging_filename {
+    width: 1fr;
+    padding-left: 1;
+}

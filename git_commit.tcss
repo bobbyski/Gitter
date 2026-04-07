@@ -6,8 +6,9 @@ GitCommitModal {
     background: $surface;
     border: solid $primary;
     padding: 1 2;
-    width: 80;
-    height: 24;
+    width: 1fr;
+    height: 1fr;
+    margin: 2;
 }
 
 #commit_title {
@@ -37,6 +38,8 @@ GitCommitModal {
     height: 1fr;
     border: solid $primary-darken-2;
     margin-bottom: 1;
+    border-title: left;
+    width: 50%
 }
 
 #commit_button_row {

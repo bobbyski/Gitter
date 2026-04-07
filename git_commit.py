@@ -64,16 +64,24 @@ class GitCommitModal(ModalScreen[CommitResult]):
         yield Vertical(
             Label(f"Commit — {self._project.name}", id="commit_title"),
             Horizontal(
-                Vertical(Horizontal( Select( [("feat", "feat"), ("fix", "fix"), ("chore", "chore"), ("spike", "spike")],
-                            value=self.commitType,
-                            prompt="type",
-                            id="commit_type" ),
+                Vertical(
 
-                        Input(value=self.commitIssue, placeholder="issue", id="commit_issue"),
-                        Input(value=self.commitSummary, placeholder="summary", id="commit_summary"),
-                        Checkbox("add unstaged", value=True, id="commit_add_unstaged"),
-                        id="commit_header_row" ),
-                    Horizontal( TextArea(id="commit_message"), GitStagingView(git_status=self._project.status), id="main_commit_container")
+
+                    Horizontal(
+                        Vertical(
+                            Horizontal(
+                                Select([("feat", "feat"), ("fix", "fix"), ("chore", "chore"), ("spike", "spike")],
+                                       value=self.commitType,
+                                       prompt="type",
+                                       id="commit_type"),
+
+                                Input(value=self.commitIssue, placeholder="issue", id="commit_issue"),
+                                Input(value=self.commitSummary, placeholder="summary", id="commit_summary"),
+                                Checkbox("add unstaged", value=True, id="commit_add_unstaged"),
+                                id="commit_header_row"),
+                            TextArea(id="commit_message"), id="commit_message_container"
+                        ),
+                        GitStagingView(git_status=self._project.status), id="main_commit_container")
                 )
             ),
             Horizontal(

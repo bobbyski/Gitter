@@ -6,6 +6,7 @@ GitStagingView {
 #staging_container {
     height: 100%;
     width: 100%;
+    background-color: red;
 }
 
 #staged_box {
@@ -19,6 +20,9 @@ GitStagingView {
     align-horizontal: center;
     align-vertical: middle;
     padding: 0 1;
+    margin-left: 2
+    margin-right: 2
+    width: 1fr;
 }
 
 #btn_stage_all {
@@ -29,6 +33,7 @@ GitStagingView {
     height: 1fr;
     border: solid $primary-darken-2;
     border-title-align: left;
+    width: 80;
 }
 
 .staging_row {

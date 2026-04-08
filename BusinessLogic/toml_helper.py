@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
+from pathlib import Path
+
 class TomlHelper:
     def __init__(self):
-        self.filename = "pyproject.toml"
+        self.filename = Path(__file__).parent.parent / "pyproject.toml"
 
     """Helper class for working with TOML files."""
     def get_version(self) -> str:
@@ -17,5 +19,5 @@ class TomlHelper:
 
 if __name__ == "__main__":
     helper = TomlHelper()
-    version = helper.get_version(helper.filename)
+    version = helper.get_version()
     print(f"Project version: {version}")

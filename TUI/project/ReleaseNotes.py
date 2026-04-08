@@ -13,7 +13,7 @@ class ReleaseNotesView(Static):
             self.height = height
             super().__init__()
 
-    CSS_PATH = ["ReleaseNotes.tcss", "project_view.tcss"]
+    CSS_PATH = ["TUI/project/ReleaseNotes.tcss", "TUI/project/project_view.tcss"]
 
     def __init__(self, markdown_content: str, title: str = "Release Notes"):
         super().__init__()

@@ -3,8 +3,6 @@ import subprocess
 
 from model.GitLog import GitLog
 from model.GitStatus import GitStatus
-from model.Release import Release
-from rich_log import GitterLogger
 
 
 class GitManager:

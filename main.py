@@ -2,16 +2,14 @@
 
 import argparse
 from rich.markdown import Markdown
-from pygments.styles import get_all_styles
 
-import rich_log
 from model.MainFileManager import MainFileManager
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from toml_helper import TomlHelper
+from BusinessLogic.toml_helper import TomlHelper
 
 
 def build_parser():
@@ -135,7 +133,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if parser.parse_args().command.lower() == 'tui':
-        from MenuApp import MenuApp
+        from TUI.MenuApp import MenuApp
         app = MenuApp()
         app.run()
     elif parser.parse_args().command.lower() == 'version':

@@ -6,24 +6,29 @@ from typing import Optional
 from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal
-from textual.widgets import Header, Footer, Label, Markdown
-from add_or_edit_project import AddOrEditProject
-from git_commit import GitCommitModal
-from FileMenu import FileMenu
-from MenuBar import MenuBar
-from ProjectView import ProjectView
-from ReleaseNotes import ReleaseNotesView
-from ViewMenu import ViewMenu
+from textual.widgets import Header, Footer, Markdown
+
+from TUI.Menu.FileMenu import FileMenu
+from TUI.Menu.MenuBar import MenuBar
+from TUI.project.add_or_edit_project import AddOrEditProject
+from TUI.commit.git_commit import GitCommitModal
+from TUI.project.ProjectView import ProjectView
+from TUI.project.ReleaseNotes import ReleaseNotesView
+from TUI.Menu.ViewMenu import ViewMenu
 from model.MainFileManager import MainFileManager
 from model.Project import Project
-from model.Release import Release
-from rich_log import GitterLogger, RichLogWindow
+from TUI.debug.rich_log import GitterLogger, RichLogWindow
 
 
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
-    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss", "add_or_edit_project.tcss", "git_commit.tcss", "git_staging.tcss"]
+    CSS_PATH = ["menu_app.tcss",
+                "project/project_view.tcss",
+                "project/ReleaseNotes.tcss",
+                "project/add_or_edit_project.tcss",
+                "commit/git_commit.tcss",
+                "commit/git_staging.tcss"]
 
     BINDINGS = [
         ("ctrl+q", "quit", "Quit"),

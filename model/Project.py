@@ -3,9 +3,6 @@ from BusinessLogic.GitManager import GitManager
 from model.GitLog import GitLog
 from model.Issue import Issue
 from model.Release import Release
-import re
-
-from rich_log import GitterLogger
 
 
 @dataclass

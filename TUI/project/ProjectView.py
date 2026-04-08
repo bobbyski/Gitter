@@ -3,14 +3,14 @@ from pathlib import Path
 from textual import on, events
 from textual.app import App, ComposeResult
 from textual.message import Message
-from textual.widgets import Static, Label, Button, RichLog
+from textual.widgets import Static, Label
 from textual.containers import VerticalScroll, Horizontal, Vertical
 
-from ReleaseNotes import ReleaseNotesView
-from add_or_edit_project import AddOrEditProject
+from TUI.project.ReleaseNotes import ReleaseNotesView
+from TUI.project.add_or_edit_project import AddOrEditProject
 from model import Project
 from model.MainFileManager import MainFileManager
-from rich_log import GitterLogger
+from TUI.debug.rich_log import GitterLogger
 
 
 class ProjectView(Static):
@@ -166,7 +166,7 @@ class ProjectView(Static):
         return "".join(markdown_lines)
 
 class ProjectApp(App):
-    CSS_PATH = "project_view.tcss"
+    CSS_PATH = "TUI/project/project_view.tcss"
 
     def compose(self) -> ComposeResult:
         yield ProjectView()

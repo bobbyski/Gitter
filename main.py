@@ -4,6 +4,7 @@ import argparse
 from rich.markdown import Markdown
 
 from model.MainFileManager import MainFileManager
+from model.Project import Project
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
@@ -17,6 +18,8 @@ def build_parser():
     parser = argparse.ArgumentParser(description='Git Repository Manager')
 
     subparsers = parser.add_subparsers(title='commands', dest='command', required=True)
+    add_parser = subparsers.add_parser('add', help='Add current directory as a project', aliases=['Add', 'ADD'])
+    add_parser.add_argument('-p', '--project', type=str, help='Name for the project (defaults to directory name)')
     subparsers.add_parser('status', help='Show status of all projects', aliases=['Status', 'STATUS'])
     subparsers.add_parser('tui', help='Open TUI viewer', aliases=['TUI', 'tui'])
     subparsers.add_parser('issues', help='Show issues for projects', aliases=['Issues', 'ISSUES'])
@@ -37,6 +40,32 @@ def show_version(version):
     version = TomlHelper().get_version()
     print(f"Version {version}")
     exit(0)
+
+def add_project(name=None):
+    cwd = str(Path.cwd())
+    for project in MainFileManager.shared.projects:
+        if Path(project.directory).resolve() == Path(cwd).resolve():
+            Console().print(f"[red]Already added:[/red] {project.name} ({project.directory})")
+            return
+
+    project_name = name if name else Path(cwd).name
+    new_project = Project(
+        name=project_name,
+        directory=cwd,
+        status="",
+        tagBranch="main",
+        issuePrefixes=[],
+        prPatterns=[],
+        favorite=False,
+        groups=[],
+        commits=[],
+        issues=[],
+        releases=[],
+    )
+    MainFileManager.shared.add_project(new_project)
+    MainFileManager.save_shared_to_json(str(Path.home() / ".gitter"))
+    Console().print(f"[green]Added:[/green] {project_name} ({cwd})")
+
 
 def status():
     table = Table(title="Projects")
@@ -138,6 +167,10 @@ if __name__ == '__main__':
         app.run()
     elif parser.parse_args().command.lower() == 'version':
         show_version('0.1.0')
+    elif parser.parse_args().command.lower() == 'add':
+        pathname = str(Path.home() / ".gitter")
+        MainFileManager.load_shared_from_json(pathname)
+        add_project(args.project)
     else:
         pathname = str(Path.home() / ".gitter")
         MainFileManager.load_shared_from_json(pathname)

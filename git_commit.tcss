@@ -5,14 +5,17 @@ GitCommitModal {
 #commit_container {
     background: $surface;
     border: solid $primary;
-    padding: 1 2;
-    width: 80;
-    height: 24;
+    border-title-align: left;
+    padding: 1 1;
+    width: 1fr;
+    height: 1fr;
+    margin-left: 1;
+    margin-top: 1;
 }
 
 #commit_title {
     text-style: bold;
-    color: $primary;
+    color: $primary-darken-2;
     margin-bottom: 1;
 }
 
@@ -22,21 +25,27 @@ GitCommitModal {
 }
 
 #commit_type {
-    width: 14;
+    width: 16;
 }
 
 #commit_issue {
-    width: 14;
+    width: 18;
 }
 
 #commit_summary {
     width: 1fr;
 }
 
+#commit_message_container {
+    height: 1fr;
+    width: 50%;
+}
+
 #commit_message {
     height: 1fr;
     border: solid $primary-darken-2;
     margin-bottom: 1;
+    width: 1fr;
 }
 
 #commit_button_row {

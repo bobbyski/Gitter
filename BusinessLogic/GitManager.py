@@ -32,6 +32,34 @@ class GitManager:
         output = result.stdout.strip() or result.stderr.strip()
         return success, output
 
+    def stage(self, filename: str) -> tuple:
+        result = subprocess.run(
+            ["git", "-C", self.repo, "add", filename],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
+    def stage_all(self) -> tuple:
+        result = subprocess.run(
+            ["git", "-C", self.repo, "add", "-A"],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
+    def unstage(self, filename: str) -> tuple:
+        result = subprocess.run(
+            ["git", "-C", self.repo, "restore", "--staged", filename],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
+    def unstage_all(self) -> tuple:
+        result = subprocess.run(
+            ["git", "-C", self.repo, "restore", "--staged", "."],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
     def get_logs(self, limit: int = 1000, branch: str = ""):
         # GitterLogger.log( f"**********************************\nGetting logs for branch {branch} at {self.repo}\n**********************************" )
 

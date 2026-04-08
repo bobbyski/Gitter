@@ -81,7 +81,7 @@ class GitCommitModal(ModalScreen[CommitResult]):
                                 id="commit_header_row"),
                             TextArea(id="commit_message"), id="commit_message_container"
                         ),
-                        GitStagingView(git_status=self._project.status), id="main_commit_container")
+                        GitStagingView(git_status=self._project.status, repo_path=self._project.directory), id="main_commit_container")
                 )
             ),
             Horizontal(

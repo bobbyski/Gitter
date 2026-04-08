@@ -77,7 +77,7 @@ class GitCommitModal(ModalScreen[CommitResult]):
 
                                 Input(value=self.commitIssue, placeholder="issue", id="commit_issue"),
                                 Input(value=self.commitSummary, placeholder="summary", id="commit_summary"),
-                                Checkbox("add unstaged", value=True, id="commit_add_unstaged"),
+                                Checkbox("add unstaged", value=False, id="commit_add_unstaged"),
                                 id="commit_header_row"),
                             TextArea(id="commit_message"), id="commit_message_container"
                         ),

@@ -23,7 +23,7 @@ from rich_log import GitterLogger, RichLogWindow
 class MenuApp(App):
     """A Textual app with a top menu bar and a 'File' popup menu."""
     
-    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss", "add_or_edit_project.tcss", "git_commit.tcss"]
+    CSS_PATH = ["menu_app.tcss", "project_view.tcss", "ReleaseNotes.tcss", "add_or_edit_project.tcss", "git_commit.tcss", "git_staging.tcss"]
 
     BINDINGS = [
         ("ctrl+q", "quit", "Quit"),

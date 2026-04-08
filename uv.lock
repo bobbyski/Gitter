@@ -529,7 +529,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/d5/c9/8ce25ce18d0083f6e
 
 [[package]]
 name = "gitter"
-version = "0.1.1"
+version = "0.1.5"
 source = { virtual = "." }
 dependencies = [
     { name = "gitstatus" },

@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from typing import Optional
 
-import gitStatus
 from textual import on
 from textual.app import ComposeResult
 from textual.screen import ModalScreen

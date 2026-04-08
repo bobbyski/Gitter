@@ -10,7 +10,7 @@ from textual.screen import ModalScreen
 from textual.widgets import Button, Checkbox, Input, Label, Select, TextArea
 from textual.containers import Horizontal, Vertical
 
-from git_staging import GitStagingView
+from TUI.commit.git_staging import GitStagingView
 from model.Project import Project
 
 

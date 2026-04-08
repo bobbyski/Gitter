@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from toml_helper import TomlHelper
+from BusinessLogic.toml_helper import TomlHelper
 
 
 def build_parser():

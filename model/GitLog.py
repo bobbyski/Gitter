@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 import re
 
-from model.Issue import Issue
 from model.Release import Release
-from rich_log import GitterLogger
 
 
 @dataclass

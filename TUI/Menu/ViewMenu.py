@@ -2,7 +2,7 @@ from textual import on
 from textual.app import ComposeResult
 from textual.widgets import OptionList
 from textual.screen import ModalScreen
-from rich_log import GitterLogger
+from TUI.debug.rich_log import GitterLogger
 
 class ViewMenu(ModalScreen[str]):
     def __init__(self, logs_visible: bool, releasese_visible: bool):

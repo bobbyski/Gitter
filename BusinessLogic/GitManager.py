@@ -140,57 +140,80 @@ class GitManager:
         result = subprocess.run(args, capture_output=True, text=True)
         return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
 
+    def _run(self, *args) -> tuple:
+        """Run a single git command, returning (success, output)."""
+        result = subprocess.run(
+            ["git", "-C", self.repo] + list(args),
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
+    def _run_sequence(self, *commands) -> tuple:
+        """Run a sequence of git command arg-lists, stopping on first failure."""
+        output_lines = []
+        for args in commands:
+            success, output = self._run(*args)
+            if output:
+                output_lines.append(output)
+            if not success:
+                return False, "\n".join(output_lines)
+        return True, "\n".join(output_lines)
+
     def flow_feature_start(self, name: str) -> tuple:
         """
-        Starts a new git-flow feature branch.
+        Starts a feature branch from develop: checkout develop, create feature/<name>.
 
         :param name: Feature branch name (without the feature/ prefix).
         :returns: (success, output) tuple.
         """
-        result = subprocess.run(
-            ["git", "-C", self.repo, "flow", "feature", "start", name],
-            capture_output=True, text=True,
+        return self._run_sequence(
+            ["checkout", "develop"],
+            ["checkout", "-b", f"feature/{name}"],
         )
-        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
 
     def flow_feature_finish(self, name: str) -> tuple:
         """
-        Finishes a git-flow feature branch, merging it back into develop.
+        Finishes a feature branch: merge --no-ff into develop, delete the branch.
 
         :param name: Feature branch name (without the feature/ prefix).
         :returns: (success, output) tuple.
         """
-        result = subprocess.run(
-            ["git", "-C", self.repo, "flow", "feature", "finish", name],
-            capture_output=True, text=True,
+        branch = f"feature/{name}"
+        return self._run_sequence(
+            ["checkout", "develop"],
+            ["merge", "--no-ff", branch, "-m", f"Merge feature '{name}' into develop"],
+            ["branch", "-d", branch],
         )
-        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
 
     def flow_release_start(self, version: str) -> tuple:
         """
-        Starts a new git-flow release branch.
+        Starts a release branch from develop: checkout develop, create release/<version>.
 
         :param version: Release version string (e.g. "1.2.0").
         :returns: (success, output) tuple.
         """
-        result = subprocess.run(
-            ["git", "-C", self.repo, "flow", "release", "start", version],
-            capture_output=True, text=True,
+        return self._run_sequence(
+            ["checkout", "develop"],
+            ["checkout", "-b", f"release/{version}"],
         )
-        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
 
-    def flow_release_finish(self, version: str) -> tuple:
+    def flow_release_finish(self, version: str, main_branch: str = "main") -> tuple:
         """
-        Finishes a git-flow release branch, merging into main and develop and tagging.
+        Finishes a release branch: merge into main, tag, merge into develop, delete branch.
 
         :param version: Release version string (e.g. "1.2.0").
+        :param main_branch: The production branch name (default: "main").
         :returns: (success, output) tuple.
         """
-        result = subprocess.run(
-            ["git", "-C", self.repo, "flow", "release", "finish", "-m", version, version],
-            capture_output=True, text=True,
+        branch = f"release/{version}"
+        return self._run_sequence(
+            ["checkout", main_branch],
+            ["merge", "--no-ff", branch, "-m", f"Release {version}"],
+            ["tag", "-a", version, "-m", f"Release {version}"],
+            ["checkout", "develop"],
+            ["merge", "--no-ff", branch, "-m", f"Merge release '{version}' into develop"],
+            ["branch", "-d", branch],
         )
-        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
 
     def get_logs(self, limit: int = 1000, branch: str = ""):
         """

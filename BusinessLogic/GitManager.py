@@ -198,14 +198,22 @@ class GitManager:
             ["checkout", "-b", f"release/{version}"],
         )
 
-    def flow_release_finish(self, version: str, main_branch: str = "main") -> tuple:
+    def _detect_main_branch(self) -> str:
+        """Returns 'main' if it exists in the repo, otherwise 'master'."""
+        result = subprocess.run(
+            ["git", "-C", self.repo, "branch", "--list", "main"],
+            capture_output=True, text=True,
+        )
+        return "main" if result.stdout.strip() else "master"
+
+    def flow_release_finish(self, version: str) -> tuple:
         """
-        Finishes a release branch: merge into main, tag, merge into develop, delete branch.
+        Finishes a release branch: merge into main/master, tag, merge into develop, delete branch.
 
         :param version: Release version string (e.g. "1.2.0").
-        :param main_branch: The production branch name (default: "main").
         :returns: (success, output) tuple.
         """
+        main_branch = self._detect_main_branch()
         branch = f"release/{version}"
         return self._run_sequence(
             ["checkout", main_branch],

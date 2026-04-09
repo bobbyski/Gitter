@@ -24,15 +24,30 @@ class GitStagingView(Static):
         self._git_status = git_status
         self._repo_path = repo_path
 
+    @staticmethod
+    def _state_class(state: str) -> str:
+        if state in ("new file",):
+            return "staging_new"
+        if state in ("modified",):
+            return "staging_modified"
+        if state in ("deleted",):
+            return "staging_deleted"
+        if state in ("renamed",):
+            return "staging_renamed"
+        if state in ("untracked",):
+            return "staging_untracked"
+        return "staging_other"
+
     def compose(self) -> ComposeResult:
         staged = self._git_status.stagedFiles if self._git_status else []
         unstaged = self._git_status.unstagedFiles if self._git_status else []
+        untracked = self._git_status.filesUntracked if self._git_status else []
 
         with Vertical(id="staging_container"):
             with VerticalScroll(id="staged_box"):
                 for f in staged:
                     row = Horizontal(
-                        Label(f.state, classes="staging_state"),
+                        Label(f.state, classes=f"staging_state {self._state_class(f.state)}"),
                         Label(f.filename, classes="staging_filename"),
                         classes="staging_row",
                     )
@@ -46,11 +61,19 @@ class GitStagingView(Static):
             with VerticalScroll(id="unstaged_box"):
                 for f in unstaged:
                     row = Horizontal(
-                        Label(f.state, classes="staging_state"),
+                        Label(f.state, classes=f"staging_state {self._state_class(f.state)}"),
                         Label(f.filename, classes="staging_filename"),
                         classes="staging_row",
                     )
                     row.data = ("unstaged", f.filename)
+                    yield row
+                for filename in untracked:
+                    row = Horizontal(
+                        Label("untracked", classes="staging_state staging_untracked"),
+                        Label(filename, classes="staging_filename"),
+                        classes="staging_row",
+                    )
+                    row.data = ("unstaged", filename)
                     yield row
 
     def on_mount(self) -> None:

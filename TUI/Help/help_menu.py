@@ -15,6 +15,8 @@ HELP_TOPICS = [
     ("Version", "version.md"),
 ]
 
+ABOUT_LABEL = "About Gitter"
+
 
 class HelpMenu(ModalScreen[str]):
     """Modal menu listing help topics; dismisses with the selected filename."""
@@ -23,16 +25,15 @@ class HelpMenu(ModalScreen[str]):
 
     def compose(self) -> ComposeResult:
         yield OptionList(
+            ABOUT_LABEL,
+            "---",
             *[label for label, _ in HELP_TOPICS],
             id="help_menu_list",
         )
 
     @on(OptionList.OptionSelected)
     def handle_option_selected(self, event: OptionList.OptionSelected) -> None:
-        label = str(event.option.prompt)
-        filename = next((f for l, f in HELP_TOPICS if l == label), None)
-        if filename:
-            self.dismiss(filename)
+        self.dismiss(str(event.option.prompt))
 
     def on_click(self, event: events.Click) -> None:
         if event.widget is self:

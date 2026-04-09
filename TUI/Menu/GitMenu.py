@@ -11,6 +11,7 @@ class GitMenu(ModalScreen[str]):
 
     def compose(self) -> ComposeResult:
         yield OptionList(
+            "Commit",
             "Pull",
             "Fetch",
             "Push",

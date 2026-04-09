@@ -158,7 +158,9 @@ class MenuApp(App):
         from BusinessLogic.GitManager import GitManager
         project = self.project.selected_project
         manager = GitManager(project.directory)
-        if result == "Pull":
+        if result == "Commit":
+            self.action_commit()
+        elif result == "Pull":
             success, output = manager.pull()
             GitterLogger.log(f"Pull {'succeeded' if success else 'failed'}: {output}")
             if success:

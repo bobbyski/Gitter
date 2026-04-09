@@ -166,9 +166,10 @@ class GitManager:
         :param name: Feature branch name (without the feature/ prefix).
         :returns: (success, output) tuple.
         """
+        safe_name = name.replace(" ", "_")
         return self._run_sequence(
             ["checkout", "develop"],
-            ["checkout", "-b", f"feature/{name}"],
+            ["checkout", "-b", f"feature/{safe_name}"],
         )
 
     def flow_feature_finish(self, name: str) -> tuple:

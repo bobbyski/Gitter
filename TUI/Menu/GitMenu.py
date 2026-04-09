@@ -17,15 +17,20 @@ class GitMenu(ModalScreen[str]):
     def compose(self) -> ComposeResult:
         on_develop = self._branch == "develop"
         on_feature = self._branch.startswith("feature/") or self._branch.startswith("feat/")
+        on_release = self._branch.startswith("release/")
 
         yield OptionList(
-            "Commit",
             "Pull",
             "Fetch",
             "Push",
             "---",
+            "Commit",
+            "---",
             Option("Start Feature", id="start_feature", disabled=not on_develop),
             Option("Finish Feature", id="finish_feature", disabled=not on_feature),
+            "---",
+            Option("Start Release", id="start_release", disabled=not on_develop),
+            Option("Finish Release", id="finish_release", disabled=not on_release),
             id="git_list",
         )
 

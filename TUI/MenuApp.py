@@ -15,6 +15,8 @@ from TUI.project.add_or_edit_project import AddOrEditProject
 from TUI.commit.git_commit import GitCommitModal
 from TUI.GitFlow.start_feature import StartFeatureModal
 from TUI.GitFlow.finish_feature import FinishFeatureModal
+from TUI.GitFlow.start_release import StartReleaseModal
+from TUI.GitFlow.finish_release import FinishReleaseModal
 from TUI.project.ProjectView import ProjectView
 from TUI.project.ReleaseNotes import ReleaseNotesView
 from TUI.Menu.ViewMenu import ViewMenu
@@ -33,7 +35,9 @@ class MenuApp(App):
                 "commit/git_commit.tcss",
                 "commit/git_staging.tcss",
                 "GitFlow/start_feature.tcss",
-                "GitFlow/finish_feature.tcss"]
+                "GitFlow/finish_feature.tcss",
+                "GitFlow/start_release.tcss",
+                "GitFlow/finish_release.tcss"]
 
     BINDINGS = [
         ("ctrl+q", "quit", "Quit"),
@@ -191,6 +195,10 @@ class MenuApp(App):
             self.push_screen(StartFeatureModal(project), callback=self.on_start_feature_result)
         elif result == "Finish Feature":
             self.push_screen(FinishFeatureModal(project), callback=self.on_finish_feature_result)
+        elif result == "Start Release":
+            self.push_screen(StartReleaseModal(project), callback=self.on_start_release_result)
+        elif result == "Finish Release":
+            self.push_screen(FinishReleaseModal(project), callback=self.on_finish_release_result)
 
     def on_start_feature_result(self, name: Optional[str]) -> None:
         if not name:
@@ -202,6 +210,31 @@ class MenuApp(App):
         if success:
             project.update()
             self.project.refresh(recompose=True)
+
+    def on_start_release_result(self, version: Optional[str]) -> None:
+        if not version:
+            return
+        from BusinessLogic.GitManager import GitManager
+        project = self.project.selected_project
+        success, output = GitManager(project.directory).flow_release_start(version)
+        GitterLogger.log(f"Start release '{version}' {'succeeded' if success else 'failed'}: {output}")
+        if success:
+            project.update()
+            self.project.refresh(recompose=True)
+
+    def on_finish_release_result(self, confirmed: bool) -> None:
+        if not confirmed:
+            return
+        from BusinessLogic.GitManager import GitManager
+        project = self.project.selected_project
+        branch = project.status.branch if project.status else ""
+        version = branch.split("/", 1)[1] if "/" in branch else branch
+        success, output = GitManager(project.directory).flow_release_finish(version)
+        GitterLogger.log(f"Finish release '{version}' {'succeeded' if success else 'failed'}: {output}")
+        if success:
+            project.update()
+            self.project.refresh(recompose=True)
+            self.update_markdown()
 
     def on_finish_feature_result(self, confirmed: bool) -> None:
         if not confirmed:

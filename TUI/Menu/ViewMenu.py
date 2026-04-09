@@ -1,10 +1,11 @@
-from textual import on
+from textual import on, events
 from textual.app import ComposeResult
 from textual.widgets import OptionList
 from textual.screen import ModalScreen
-from TUI.debug.rich_log import GitterLogger
 
 class ViewMenu(ModalScreen[str]):
+    BINDINGS = [("escape", "dismiss", "Close")]
+
     def __init__(self, logs_visible: bool, releasese_visible: bool):
         super().__init__()
         self._logs_label = "Hide logs" if logs_visible else "Show logs"
@@ -23,5 +24,6 @@ class ViewMenu(ModalScreen[str]):
     def handle_option_selected(self, event: OptionList.OptionSelected) -> None:
         self.dismiss(str(event.option.prompt))
 
-    def on_click(self) -> None:
-        GitterLogger.log( "View menu clicked (ViewMenu)" )
+    def on_click(self, event: events.Click) -> None:
+        if event.widget is self:
+            self.dismiss(None)

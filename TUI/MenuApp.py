@@ -9,6 +9,7 @@ from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Markdown
 
 from TUI.Menu.FileMenu import FileMenu
+from TUI.Menu.GitMenu import GitMenu
 from TUI.Menu.MenuBar import MenuBar
 from TUI.project.add_or_edit_project import AddOrEditProject
 from TUI.commit.git_commit import GitCommitModal
@@ -40,6 +41,7 @@ class MenuApp(App):
         ("ctrl+r", "show_release_notes", "Show Release Notes"),
         ("ctrl+f", "show_file_menu", "File Menu"),
         ("ctrl+v", "show_view_menu", "View Menu"),
+        ("ctrl+g", "show_git_menu", "Git Menu"),
     ]
 
     def app_container_class(self):
@@ -139,6 +141,42 @@ class MenuApp(App):
         logs_visible = self.heightClass == "project_view_split_height"
         releasese_visible = self.releaseNotesWindow.display
         self.push_screen(ViewMenu(logs_visible, releasese_visible ), callback=self.on_view_menu_result)
+
+    def action_show_git_menu(self) -> None:
+        self.push_screen(GitMenu(), callback=self.on_git_menu_result)
+
+    @on(events.Click, "#git_menu_label")
+    def handle_git_click(self) -> None:
+        self.push_screen(GitMenu(), callback=self.on_git_menu_result)
+
+    def on_git_menu_result(self, result: Optional[str]) -> None:
+        if result is None:
+            return
+        if self.project.selected_project is None:
+            GitterLogger.log("No project selected for git operation.")
+            return
+        from BusinessLogic.GitManager import GitManager
+        project = self.project.selected_project
+        manager = GitManager(project.directory)
+        if result == "Commit":
+            self.action_commit()
+        elif result == "Pull":
+            success, output = manager.pull()
+            GitterLogger.log(f"Pull {'succeeded' if success else 'failed'}: {output}")
+            if success:
+                project.update()
+                self.project.refresh(recompose=True)
+                self.update_markdown()
+        elif result == "Fetch":
+            success, output = manager.fetch()
+            GitterLogger.log(f"Fetch {'succeeded' if success else 'failed'}: {output}")
+            if success:
+                project.update()
+                self.project.refresh(recompose=True)
+                self.update_markdown()
+        elif result == "Push":
+            success, output = manager.push()
+            GitterLogger.log(f"Push {'succeeded' if success else 'failed'}: {output}")
 
     def on_view_menu_result(self, result: str) -> None:
         if result == "Show logs":

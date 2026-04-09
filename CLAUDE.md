@@ -31,6 +31,7 @@ TUI/
     MenuBar.py                  # Top menu bar widget
     FileMenu.py                 # File menu modal screen
     ViewMenu.py                 # View menu modal — takes current visibility state, dismisses with action
+    GitMenu.py                  # Git menu modal — Pull, Fetch, Push options; dismisses with action string
 
   project/
     ProjectView.py              # Main project table; defines RefreshRequested, ResizeRequested, ProjectSelected
@@ -53,7 +54,8 @@ TUI/
 
 BusinessLogic/
   GitManager.py                 # Runs git CLI commands via subprocess:
-                                #   get_status, get_logs, commit, stage, stage_all, unstage, unstage_all
+                                #   get_status, get_logs, commit, stage, stage_all, unstage, unstage_all,
+                                #   push, pull, fetch
   toml_helper.py                # Reads version from pyproject.toml; path resolved relative to file location
 
 model/
@@ -100,6 +102,7 @@ python main.py version          # Print version from pyproject.toml
 - **Logging**: Use `GitterLogger.log(...)` (defined in `TUI/debug/rich_log.py`) instead of `print`.
 - **Timer-based refresh**: `ProjectView.on_mount` sets a 90-second interval calling `update_all()`.
 - **Commit flow**: `Ctrl+K` opens `GitCommitModal` for the selected project. The modal auto-fills type/issue/summary from the branch name (e.g. `feature/GIT-15_My_summary`). Dismisses with `(message, add_unstaged)`.
+- **Git menu**: `Ctrl+G` (or clicking "Git" in the menu bar) opens `GitMenu` for Pull, Fetch, and Push on the selected project. Results are logged via `GitterLogger`; Pull and Fetch also refresh the project view on success.
 - **Python version**: Targets Python 3.9+. Use `Optional[X]` instead of `X | None` and `from __future__ import annotations` for forward references.
 
 ## Branch strategy

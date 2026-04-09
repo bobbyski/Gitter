@@ -140,6 +140,58 @@ class GitManager:
         result = subprocess.run(args, capture_output=True, text=True)
         return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
 
+    def flow_feature_start(self, name: str) -> tuple:
+        """
+        Starts a new git-flow feature branch.
+
+        :param name: Feature branch name (without the feature/ prefix).
+        :returns: (success, output) tuple.
+        """
+        result = subprocess.run(
+            ["git", "-C", self.repo, "flow", "feature", "start", name],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
+    def flow_feature_finish(self, name: str) -> tuple:
+        """
+        Finishes a git-flow feature branch, merging it back into develop.
+
+        :param name: Feature branch name (without the feature/ prefix).
+        :returns: (success, output) tuple.
+        """
+        result = subprocess.run(
+            ["git", "-C", self.repo, "flow", "feature", "finish", name],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
+    def flow_release_start(self, version: str) -> tuple:
+        """
+        Starts a new git-flow release branch.
+
+        :param version: Release version string (e.g. "1.2.0").
+        :returns: (success, output) tuple.
+        """
+        result = subprocess.run(
+            ["git", "-C", self.repo, "flow", "release", "start", version],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
+    def flow_release_finish(self, version: str) -> tuple:
+        """
+        Finishes a git-flow release branch, merging into main and develop and tagging.
+
+        :param version: Release version string (e.g. "1.2.0").
+        :returns: (success, output) tuple.
+        """
+        result = subprocess.run(
+            ["git", "-C", self.repo, "flow", "release", "finish", "-m", version, version],
+            capture_output=True, text=True,
+        )
+        return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
+
     def get_logs(self, limit: int = 1000, branch: str = ""):
         """
         Returns parsed git log entries for the repository.

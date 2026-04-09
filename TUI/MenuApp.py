@@ -13,6 +13,8 @@ from TUI.Menu.GitMenu import GitMenu
 from TUI.Menu.MenuBar import MenuBar
 from TUI.project.add_or_edit_project import AddOrEditProject
 from TUI.commit.git_commit import GitCommitModal
+from TUI.GitFlow.start_feature import StartFeatureModal
+from TUI.GitFlow.finish_feature import FinishFeatureModal
 from TUI.project.ProjectView import ProjectView
 from TUI.project.ReleaseNotes import ReleaseNotesView
 from TUI.Menu.ViewMenu import ViewMenu
@@ -29,7 +31,9 @@ class MenuApp(App):
                 "project/ReleaseNotes.tcss",
                 "project/add_or_edit_project.tcss",
                 "commit/git_commit.tcss",
-                "commit/git_staging.tcss"]
+                "commit/git_staging.tcss",
+                "GitFlow/start_feature.tcss",
+                "GitFlow/finish_feature.tcss"]
 
     BINDINGS = [
         ("ctrl+q", "quit", "Quit"),
@@ -142,12 +146,18 @@ class MenuApp(App):
         releasese_visible = self.releaseNotesWindow.display
         self.push_screen(ViewMenu(logs_visible, releasese_visible ), callback=self.on_view_menu_result)
 
+    def _current_branch(self) -> str:
+        p = self.project.selected_project
+        if p and p.status and hasattr(p.status, "branch"):
+            return p.status.branch
+        return ""
+
     def action_show_git_menu(self) -> None:
-        self.push_screen(GitMenu(), callback=self.on_git_menu_result)
+        self.push_screen(GitMenu(self._current_branch()), callback=self.on_git_menu_result)
 
     @on(events.Click, "#git_menu_label")
     def handle_git_click(self) -> None:
-        self.push_screen(GitMenu(), callback=self.on_git_menu_result)
+        self.push_screen(GitMenu(self._current_branch()), callback=self.on_git_menu_result)
 
     def on_git_menu_result(self, result: Optional[str]) -> None:
         if result is None:
@@ -177,6 +187,35 @@ class MenuApp(App):
         elif result == "Push":
             success, output = manager.push()
             GitterLogger.log(f"Push {'succeeded' if success else 'failed'}: {output}")
+        elif result == "Start Feature":
+            self.push_screen(StartFeatureModal(project), callback=self.on_start_feature_result)
+        elif result == "Finish Feature":
+            self.push_screen(FinishFeatureModal(project), callback=self.on_finish_feature_result)
+
+    def on_start_feature_result(self, name: Optional[str]) -> None:
+        if not name:
+            return
+        from BusinessLogic.GitManager import GitManager
+        project = self.project.selected_project
+        success, output = GitManager(project.directory).flow_feature_start(name)
+        GitterLogger.log(f"Start feature '{name}' {'succeeded' if success else 'failed'}: {output}")
+        if success:
+            project.update()
+            self.project.refresh(recompose=True)
+
+    def on_finish_feature_result(self, confirmed: bool) -> None:
+        if not confirmed:
+            return
+        from BusinessLogic.GitManager import GitManager
+        project = self.project.selected_project
+        branch = project.status.branch if project.status else ""
+        feature_name = branch.split("/", 1)[1] if "/" in branch else branch
+        success, output = GitManager(project.directory).flow_feature_finish(feature_name)
+        GitterLogger.log(f"Finish feature '{feature_name}' {'succeeded' if success else 'failed'}: {output}")
+        if success:
+            project.update()
+            self.project.refresh(recompose=True)
+            self.update_markdown()
 
     def on_view_menu_result(self, result: str) -> None:
         if result == "Show logs":

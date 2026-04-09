@@ -1,4 +1,4 @@
-from textual import on
+from textual import on, events
 from textual.app import ComposeResult
 from textual.widgets import OptionList
 from textual.screen import ModalScreen
@@ -8,6 +8,8 @@ from TUI.debug.rich_log import GitterLogger
 
 class FileMenu(ModalScreen[str]):
     """A modal screen that displays a popup 'File' menu."""
+
+    BINDINGS = [("escape", "dismiss", "Close")]
 
     def compose(self) -> ComposeResult:
         yield OptionList(
@@ -27,6 +29,6 @@ class FileMenu(ModalScreen[str]):
         else:
             self.dismiss(option)
 
-    def on_click(self) -> None:
-        # Close the menu if clicked outside
-        GitterLogger.log( "File menu clicked (FileMenu)" )
+    def on_click(self, event: events.Click) -> None:
+        if event.widget is self:
+            self.dismiss(None)

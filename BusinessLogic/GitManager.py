@@ -199,12 +199,12 @@ class GitManager:
         )
 
     def _detect_main_branch(self) -> str:
-        """Returns 'main' if it exists in the repo, otherwise 'master'."""
+        """Returns 'main' if it exists as a local branch, otherwise 'master'."""
         result = subprocess.run(
-            ["git", "-C", self.repo, "branch", "--list", "main"],
+            ["git", "-C", self.repo, "show-ref", "--verify", "--quiet", "refs/heads/main"],
             capture_output=True, text=True,
         )
-        return "main" if result.stdout.strip() else "master"
+        return "main" if result.returncode == 0 else "master"
 
     def flow_release_finish(self, version: str) -> tuple:
         """

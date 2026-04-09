@@ -1,0 +1,60 @@
+AboutGitter {
+    align: center middle;
+}
+
+#about_container {
+    background: $surface;
+    border: solid $primary;
+    border-title-color: $primary;
+    padding: 1 2;
+    width: 50;
+    height: auto;
+}
+
+#about_title {
+    text-style: bold;
+    color: $primary;
+    text-align: center;
+    width: 100%;
+    content-align: center middle;
+}
+
+#about_version {
+    text-align: center;
+    width: 100%;
+    content-align: center middle;
+    color: $text-muted;
+}
+
+#about_description {
+    text-align: center;
+    width: 100%;
+    content-align: center middle;
+    margin-top: 1;
+    margin-bottom: 1;
+}
+
+#about_built_with_label {
+    color: $text-muted;
+}
+
+#about_credits {
+    height: auto;
+}
+
+.about_credit {
+    color: $accent;
+}
+
+#about_copyright {
+    text-align: center;
+    width: 100%;
+    content-align: center middle;
+    color: $text-muted;
+    margin-bottom: 1;
+}
+
+#btn_close {
+    width: 100%;
+    margin-top: 1;
+}

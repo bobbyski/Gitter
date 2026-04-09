@@ -17,8 +17,9 @@ from TUI.GitFlow.start_feature import StartFeatureModal
 from TUI.GitFlow.finish_feature import FinishFeatureModal
 from TUI.GitFlow.start_release import StartReleaseModal
 from TUI.GitFlow.finish_release import FinishReleaseModal
-from TUI.Help.help_menu import HelpMenu
+from TUI.Help.help_menu import HelpMenu, HELP_TOPICS, ABOUT_LABEL
 from TUI.Help.markdown_viewer import MarkdownViewerModal
+from TUI.Help.about_gitter import AboutGitter
 from TUI.project.ProjectView import ProjectView
 from TUI.project.ReleaseNotes import ReleaseNotesView
 from TUI.Menu.ViewMenu import ViewMenu
@@ -40,7 +41,8 @@ class MenuApp(App):
                 "GitFlow/finish_feature.tcss",
                 "GitFlow/start_release.tcss",
                 "GitFlow/finish_release.tcss",
-                "Help/markdown_viewer.tcss"]
+                "Help/markdown_viewer.tcss",
+                "Help/about_gitter.tcss"]
 
     BINDINGS = [
         ("ctrl+q", "quit", "Quit"),
@@ -218,7 +220,13 @@ class MenuApp(App):
     def handle_help_click(self) -> None:
         self.push_screen(HelpMenu(), callback=self.on_help_menu_result)
 
-    def on_help_menu_result(self, filename: Optional[str]) -> None:
+    def on_help_menu_result(self, result: Optional[str]) -> None:
+        if not result:
+            return
+        if result == ABOUT_LABEL:
+            self.push_screen(AboutGitter())
+            return
+        filename = next((f for l, f in HELP_TOPICS if l == result), None)
         if not filename:
             return
         docs_path = Path(__file__).parent.parent / "documents" / filename
@@ -226,7 +234,7 @@ class MenuApp(App):
             GitterLogger.log(f"Help file not found: {docs_path}")
             return
         content = docs_path.read_text()
-        title = filename.replace(".md", "").capitalize()
+        title = result
         self.push_screen(MarkdownViewerModal(content, title=title))
 
     def on_start_release_result(self, version: Optional[str]) -> None:

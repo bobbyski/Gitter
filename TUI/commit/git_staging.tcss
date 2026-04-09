@@ -43,8 +43,31 @@ GitStagingView {
 
 .staging_state {
     width: 12;
-    color: $warning;
     padding-left: 1;
+}
+
+.staging_new {
+    color: $success;
+}
+
+.staging_modified {
+    color: $warning;
+}
+
+.staging_deleted {
+    color: $error;
+}
+
+.staging_renamed {
+    color: $accent;
+}
+
+.staging_untracked {
+    color: $text-muted;
+}
+
+.staging_other {
+    color: $text;
 }
 
 .staging_filename {

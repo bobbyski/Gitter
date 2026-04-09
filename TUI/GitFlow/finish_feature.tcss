@@ -1,0 +1,32 @@
+FinishFeatureModal {
+    align: center middle;
+}
+
+#finish_feature_container {
+    background: $surface;
+    border: solid $primary;
+    padding: 1 2;
+    width: 60;
+    height: auto;
+}
+
+#finish_feature_title {
+    text-style: bold;
+    color: $primary;
+    margin-bottom: 1;
+}
+
+#finish_feature_message {
+    margin-bottom: 1;
+    width: 100%;
+    height: auto;
+}
+
+#finish_feature_buttons {
+    height: 3;
+    align-horizontal: right;
+}
+
+#btn_cancel {
+    margin-right: 1;
+}

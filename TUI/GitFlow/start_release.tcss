@@ -1,0 +1,35 @@
+StartReleaseModal {
+    align: center middle;
+}
+
+#start_release_container {
+    background: $surface;
+    border: solid $primary;
+    padding: 1 2;
+    width: 60;
+    height: auto;
+}
+
+#start_release_title {
+    text-style: bold;
+    color: $primary;
+    margin-bottom: 1;
+}
+
+.start_release_label {
+    margin-top: 1;
+}
+
+#release_version {
+    margin-top: 0;
+    margin-bottom: 1;
+}
+
+#start_release_buttons {
+    height: 3;
+    align-horizontal: right;
+}
+
+#btn_cancel {
+    margin-right: 1;
+}

@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ## Project structure
 
 ```
-main.py                         # CLI entry point — status, issues, tui, version subcommands
+main.py                         # CLI entry point — add, status, issues, notes, raw, tui, version subcommands
 
 TUI/
   MenuApp.py                    # App class — wires together MenuBar, ProjectView, ReleaseNotes, LogWindow
@@ -31,6 +31,7 @@ TUI/
     MenuBar.py                  # Top menu bar widget
     FileMenu.py                 # File menu modal screen
     ViewMenu.py                 # View menu modal — takes current visibility state, dismisses with action
+    GitMenu.py                  # Git menu modal — Pull, Fetch, Push options; dismisses with action string
 
   project/
     ProjectView.py              # Main project table; defines RefreshRequested, ResizeRequested, ProjectSelected
@@ -53,7 +54,8 @@ TUI/
 
 BusinessLogic/
   GitManager.py                 # Runs git CLI commands via subprocess:
-                                #   get_status, get_logs, commit, stage, stage_all, unstage, unstage_all
+                                #   get_status, get_logs, commit, stage, stage_all, unstage, unstage_all,
+                                #   push, pull, fetch
   toml_helper.py                # Reads version from pyproject.toml; path resolved relative to file location
 
 model/
@@ -78,12 +80,18 @@ Projects are stored in `~/.gitter` as JSON, managed by `MainFileManager`. On sta
 ## CLI usage
 
 ```bash
+python main.py add              # Add current directory as a project (name = directory name)
+python main.py add -p NAME      # Add current directory with a custom name
 python main.py status           # Rich table of all projects with status, release, issues
 python main.py issues           # Rich table of issues grouped by project and release
 python main.py issues -p NAME   # Filter by project name
 python main.py issues -r TAG    # Filter by release tag
+python main.py notes            # Formatted release notes
+python main.py notes -p NAME    # Release notes for one project
+python main.py notes -m         # Render as Markdown
+python main.py raw              # Raw Markdown release notes (no formatting)
 python main.py tui              # Launch the Textual TUI
-python main.py version          # Print version
+python main.py version          # Print version from pyproject.toml
 ```
 
 ## Key patterns
@@ -94,6 +102,7 @@ python main.py version          # Print version
 - **Logging**: Use `GitterLogger.log(...)` (defined in `TUI/debug/rich_log.py`) instead of `print`.
 - **Timer-based refresh**: `ProjectView.on_mount` sets a 90-second interval calling `update_all()`.
 - **Commit flow**: `Ctrl+K` opens `GitCommitModal` for the selected project. The modal auto-fills type/issue/summary from the branch name (e.g. `feature/GIT-15_My_summary`). Dismisses with `(message, add_unstaged)`.
+- **Git menu**: `Ctrl+G` (or clicking "Git" in the menu bar) opens `GitMenu` for Pull, Fetch, and Push on the selected project. Results are logged via `GitterLogger`; Pull and Fetch also refresh the project view on success.
 - **Python version**: Targets Python 3.9+. Use `Optional[X]` instead of `X | None` and `from __future__ import annotations` for forward references.
 
 ## Branch strategy

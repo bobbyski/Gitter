@@ -26,6 +26,10 @@ ViewMenu {
     align: left top;
 }
 
+GitMenu {
+    align: left top;
+}
+
 #menu_list {
     width: 20;
     height: auto;
@@ -40,6 +44,15 @@ ViewMenu {
     height: auto;
     margin-top: 1;
     margin-left: 10;
+    border: solid white;
+    background: blue;
+}
+
+#git_list {
+    width: 20;
+    height: auto;
+    margin-top: 1;
+    margin-left: 14;
     border: solid white;
     background: blue;
 }

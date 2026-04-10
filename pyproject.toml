@@ -1,14 +1,13 @@
 [project]
 name = "gitter"
-version = "0.1.7"
+version = "0.1.8"
+readme = "README.md"
 description = "Git repo manager get status of multiple git repos in one place"
 requires-python = ">=3.9"
 dependencies = [
     "gitstatus>=1.2",
-    "kivy>=2.3.1",
     "textual>=8.1.1",
     "textual-dev>=1.8.0",
-    "tomli>=2.4.0",
 ]
 
 [project.scripts]

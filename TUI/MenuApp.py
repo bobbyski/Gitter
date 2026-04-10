@@ -17,7 +17,7 @@ from TUI.GitFlow.start_feature import StartFeatureModal
 from TUI.GitFlow.finish_feature import FinishFeatureModal
 from TUI.GitFlow.start_release import StartReleaseModal
 from TUI.GitFlow.finish_release import FinishReleaseModal
-from TUI.Help.help_menu import HelpMenu, HELP_TOPICS, ABOUT_LABEL
+from TUI.Help.help_menu import HelpMenu, HELP_TOPICS, ABOUT_LABEL, LICENSE_LABEL, LICENSE_FILE
 from TUI.Help.markdown_viewer import MarkdownViewerModal
 from TUI.Help.about_gitter import AboutGitter
 from TUI.project.ProjectView import ProjectView
@@ -229,7 +229,10 @@ class MenuApp(App):
         if result == ABOUT_LABEL:
             self.push_screen(AboutGitter())
             return
-        filename = next((f for l, f in HELP_TOPICS if l == result), None)
+        if result == LICENSE_LABEL:
+            filename = LICENSE_FILE
+        else:
+            filename = next((f for l, f in HELP_TOPICS if l == result), None)
         if not filename:
             return
         docs_path = Path(__file__).parent.parent / "documents" / filename

@@ -13,6 +13,9 @@ dependencies = [
 [project.scripts]
 gitter = "main:main"
 
+[tool.setuptools]
+py-modules = ["main"]
+
 [tool.setuptools.packages.find]
 include = ["model*", "BusinessLogic*", "TUI*"]
 

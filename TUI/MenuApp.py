@@ -162,11 +162,11 @@ class MenuApp(App):
         return ""
 
     def action_show_git_menu(self) -> None:
-        self.push_screen(GitMenu(self._current_branch()), callback=self.on_git_menu_result)
+        self.push_screen(GitMenu(self._current_branch(), project_selected=self.project.selected_project is not None), callback=self.on_git_menu_result)
 
     @on(events.Click, "#git_menu_label")
     def handle_git_click(self) -> None:
-        self.push_screen(GitMenu(self._current_branch()), callback=self.on_git_menu_result)
+        self.push_screen(GitMenu(self._current_branch(), project_selected=self.project.selected_project is not None), callback=self.on_git_menu_result)
 
     def on_git_menu_result(self, result: Optional[str]) -> None:
         if result is None:
@@ -196,6 +196,9 @@ class MenuApp(App):
         elif result == "Push":
             success, output = manager.push()
             GitterLogger.log(f"Push {'succeeded' if success else 'failed'}: {output}")
+        elif result == "Push Main and Develop":
+            success, output = manager.push_main_and_develop()
+            GitterLogger.log(f"Push main and develop {'succeeded' if success else 'failed'}: {output}")
         elif result == "Start Feature":
             self.push_screen(StartFeatureModal(project), callback=self.on_start_feature_result)
         elif result == "Finish Feature":

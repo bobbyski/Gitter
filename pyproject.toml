@@ -1,6 +1,6 @@
 [project]
 name = "gitter"
-version = "0.1.8"
+version = "0.1.9"
 readme = "README.md"
 description = "Git repo manager get status of multiple git repos in one place"
 requires-python = ">=3.9"
@@ -15,3 +15,8 @@ gitter = "main:main"
 
 [tool.setuptools.packages.find]
 include = ["model*", "BusinessLogic*", "TUI*"]
+
+[dependency-groups]
+dev = [
+    "twine>=6.2.0",
+]

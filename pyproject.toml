@@ -1,6 +1,6 @@
 [project]
-name = "gitter"
-version = "0.1.9"
+name = "gitterApp"
+version = "0.1.10"
 readme = "README.md"
 description = "Git repo manager get status of multiple git repos in one place"
 requires-python = ">=3.9"

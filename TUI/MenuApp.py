@@ -17,7 +17,7 @@ from TUI.GitFlow.start_feature import StartFeatureModal
 from TUI.GitFlow.finish_feature import FinishFeatureModal
 from TUI.GitFlow.start_release import StartReleaseModal
 from TUI.GitFlow.finish_release import FinishReleaseModal
-from TUI.Help.help_menu import HelpMenu, HELP_TOPICS, ABOUT_LABEL
+from TUI.Help.help_menu import HelpMenu, HELP_TOPICS, ABOUT_LABEL, LICENSE_LABEL, LICENSE_FILE
 from TUI.Help.markdown_viewer import MarkdownViewerModal
 from TUI.Help.about_gitter import AboutGitter
 from TUI.project.ProjectView import ProjectView
@@ -162,11 +162,11 @@ class MenuApp(App):
         return ""
 
     def action_show_git_menu(self) -> None:
-        self.push_screen(GitMenu(self._current_branch()), callback=self.on_git_menu_result)
+        self.push_screen(GitMenu(self._current_branch(), project_selected=self.project.selected_project is not None), callback=self.on_git_menu_result)
 
     @on(events.Click, "#git_menu_label")
     def handle_git_click(self) -> None:
-        self.push_screen(GitMenu(self._current_branch()), callback=self.on_git_menu_result)
+        self.push_screen(GitMenu(self._current_branch(), project_selected=self.project.selected_project is not None), callback=self.on_git_menu_result)
 
     def on_git_menu_result(self, result: Optional[str]) -> None:
         if result is None:
@@ -196,6 +196,9 @@ class MenuApp(App):
         elif result == "Push":
             success, output = manager.push()
             GitterLogger.log(f"Push {'succeeded' if success else 'failed'}: {output}")
+        elif result == "Push Main and Develop":
+            success, output = manager.push_main_and_develop()
+            GitterLogger.log(f"Push main and develop {'succeeded' if success else 'failed'}: {output}")
         elif result == "Start Feature":
             self.push_screen(StartFeatureModal(project), callback=self.on_start_feature_result)
         elif result == "Finish Feature":
@@ -226,7 +229,10 @@ class MenuApp(App):
         if result == ABOUT_LABEL:
             self.push_screen(AboutGitter())
             return
-        filename = next((f for l, f in HELP_TOPICS if l == result), None)
+        if result == LICENSE_LABEL:
+            filename = LICENSE_FILE
+        else:
+            filename = next((f for l, f in HELP_TOPICS if l == result), None)
         if not filename:
             return
         docs_path = Path(__file__).parent.parent / "documents" / filename

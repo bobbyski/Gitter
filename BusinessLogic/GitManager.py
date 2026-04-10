@@ -112,6 +112,19 @@ class GitManager:
         result = subprocess.run(args, capture_output=True, text=True)
         return result.returncode == 0, result.stdout.strip() or result.stderr.strip()
 
+    def push_main_and_develop(self, remote: str = "origin") -> tuple:
+        """
+        Pushes both the main/master branch and develop to the remote.
+
+        :param remote: The remote name to push to (default: "origin").
+        :returns: (success, output) tuple.
+        """
+        main_branch = self._detect_main_branch()
+        return self._run_sequence(
+            ["push", remote, main_branch],
+            ["push", remote, "develop"],
+        )
+
     def pull(self, remote: str = "origin", branch: str = "") -> tuple:
         """
         Pulls and merges changes from a remote repository.
@@ -208,7 +221,7 @@ class GitManager:
 
     def flow_release_finish(self, version: str) -> tuple:
         """
-        Finishes a release branch: merge into main/master, tag, merge into develop, delete branch.
+        Finishes a release branch: merge into main/master, tag, merge into develop, delete branch, merge main/master back into develop.
 
         :param version: Release version string (e.g. "1.2.0").
         :returns: (success, output) tuple.
@@ -222,6 +235,7 @@ class GitManager:
             ["checkout", "develop"],
             ["merge", "--no-ff", branch, "-m", f"Merge release '{version}' into develop"],
             ["branch", "-d", branch],
+            ["merge", "--no-ff", main_branch, "-m", f"Merge {main_branch} into develop after release {version}"],
         )
 
     def get_logs(self, limit: int = 1000, branch: str = ""):

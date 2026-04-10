@@ -5,7 +5,7 @@ Display a table of issues grouped by project and release.
 ## Usage
 
 ```
-python main.py issues [-p PROJECT] [-r RELEASE]
+gitter issues [-p PROJECT] [-r RELEASE]
 ```
 
 ## Options
@@ -33,25 +33,25 @@ Releases within a project are separated by a divider line. Projects are separate
 Show all issues across all projects:
 
 ```bash
-python main.py issues
+gitter issues
 ```
 
 Show issues for a specific project:
 
 ```bash
-python main.py issues -p "My Project"
+gitter issues -p "My Project"
 ```
 
 Show issues for a specific release:
 
 ```bash
-python main.py issues -r 1.2.0
+gitter issues -r 1.2.0
 ```
 
 Combine filters:
 
 ```bash
-python main.py issues -p "My Project" -r 1.2.0
+gitter issues -p "My Project" -r 1.2.0
 ```
 
 ## Notes

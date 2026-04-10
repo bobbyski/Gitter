@@ -5,7 +5,7 @@ Display a summary table of all tracked projects, showing their current git statu
 ## Usage
 
 ```
-python main.py status
+gitter status
 ```
 
 ## Options
@@ -27,7 +27,7 @@ A Rich-formatted table with the following columns:
 ## Example
 
 ```bash
-python main.py status
+gitter status
 ```
 
 ## Notes

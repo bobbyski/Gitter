@@ -5,7 +5,7 @@ Display formatted release notes for tracked projects.
 ## Usage
 
 ```
-python main.py notes [-p PROJECT] [-r RELEASE] [-m] [-t THEME]
+gitter notes [-p PROJECT] [-r RELEASE] [-m] [-t THEME]
 ```
 
 ## Options
@@ -26,31 +26,31 @@ By default, release notes are printed as plain Rich-formatted text. With `-m`, t
 Show release notes for all projects:
 
 ```bash
-python main.py notes
+gitter notes
 ```
 
 Show release notes for a specific project:
 
 ```bash
-python main.py notes -p "My Project"
+gitter notes -p "My Project"
 ```
 
 Show release notes for a specific release:
 
 ```bash
-python main.py notes -r 1.2.0
+gitter notes -r 1.2.0
 ```
 
 Render as Markdown:
 
 ```bash
-python main.py notes -m
+gitter notes -m
 ```
 
 Render as Markdown with a custom theme:
 
 ```bash
-python main.py notes -m -t github-dark
+gitter notes -m -t github-dark
 ```
 
 ## Notes

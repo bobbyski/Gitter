@@ -5,7 +5,7 @@ Add the current working directory as a tracked project in Gitter.
 ## Usage
 
 ```
-python main.py add [-p NAME]
+gitter add [-p NAME]
 ```
 
 ## Options
@@ -20,13 +20,13 @@ Add the current directory using its folder name as the project name:
 
 ```bash
 cd ~/projects/my-repo
-python main.py add
+gitter add
 ```
 
 Add the current directory with a custom name:
 
 ```bash
-python main.py add -p "My Project"
+gitter add -p "My Project"
 ```
 
 ## Notes

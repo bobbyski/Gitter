@@ -1,14 +1,14 @@
-from textual import on
+from textual import on, events
 from textual.app import ComposeResult
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 from textual.screen import ModalScreen
 
-from TUI.debug.rich_log import GitterLogger
-
 
 class GitMenu(ModalScreen[str]):
     """A modal screen that displays a popup 'Git' menu with remote operations."""
+
+    BINDINGS = [("escape", "dismiss", "Close")]
 
     def __init__(self, branch: str = ""):
         super().__init__()
@@ -38,5 +38,6 @@ class GitMenu(ModalScreen[str]):
     def handle_option_selected(self, event: OptionList.OptionSelected) -> None:
         self.dismiss(str(event.option.prompt))
 
-    def on_click(self) -> None:
-        GitterLogger.log("Git menu clicked (GitMenu)")
+    def on_click(self, event: events.Click) -> None:
+        if event.widget is self:
+            self.dismiss(None)

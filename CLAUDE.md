@@ -25,13 +25,31 @@ main.py                         # CLI entry point — add, status, issues, notes
 
 TUI/
   MenuApp.py                    # App class — wires together MenuBar, ProjectView, ReleaseNotes, LogWindow
-  menu_app.tcss                 # CSS for the main app layout
+  menu_app.tcss                 # CSS for the main app layout and all menu modal positioning
 
   Menu/
-    MenuBar.py                  # Top menu bar widget
+    MenuBar.py                  # Top menu bar widget (File, Edit, View, Git, Help labels)
     FileMenu.py                 # File menu modal screen
     ViewMenu.py                 # View menu modal — takes current visibility state, dismisses with action
-    GitMenu.py                  # Git menu modal — Pull, Fetch, Push options; dismisses with action string
+    GitMenu.py                  # Git menu modal — Pull, Fetch, Push, Commit, git-flow options;
+                                #   enabled/disabled based on current branch; dismisses with action string
+
+  GitFlow/
+    start_feature.py            # StartFeatureModal — Input for feature name; dismisses with name or None
+    finish_feature.py           # FinishFeatureModal — confirms finish; dismisses with bool
+    start_release.py            # StartReleaseModal — version field pre-filled via auto-increment; dismisses with version or None
+    finish_release.py           # FinishReleaseModal — confirms finish; dismisses with bool
+    start_feature.tcss
+    finish_feature.tcss
+    start_release.tcss
+    finish_release.tcss
+
+  Help/
+    help_menu.py                # HelpMenu modal — lists About Gitter + all doc topics; dismisses with label string
+    markdown_viewer.py          # MarkdownViewerModal — scrollable modal for displaying markdown content
+    about_gitter.py             # AboutGitter modal — version, description, credits, copyright
+    markdown_viewer.tcss
+    about_gitter.tcss
 
   project/
     ProjectView.py              # Main project table; defines RefreshRequested, ResizeRequested, ProjectSelected
@@ -44,8 +62,9 @@ TUI/
   commit/
     git_commit.py               # GitCommitModal — type/issue/summary fields auto-filled from branch name;
                                 #   embeds GitStagingView; dismisses with (message, add_unstaged) tuple
-    git_staging.py              # GitStagingView — staged/unstaged file lists; double-click to stage/unstage;
-                                #   Stage all / Unstage all buttons call GitManager directly
+    git_staging.py              # GitStagingView — staged/unstaged/untracked file lists; double-click to
+                                #   stage/unstage; state labels color-coded by type; Stage all / Unstage all
+                                #   buttons call GitManager directly
     git_commit.tcss
     git_staging.tcss
 
@@ -55,7 +74,8 @@ TUI/
 BusinessLogic/
   GitManager.py                 # Runs git CLI commands via subprocess:
                                 #   get_status, get_logs, commit, stage, stage_all, unstage, unstage_all,
-                                #   push, pull, fetch
+                                #   push, pull, fetch, flow_feature_start, flow_feature_finish,
+                                #   flow_release_start, flow_release_finish, _detect_main_branch
   toml_helper.py                # Reads version from pyproject.toml; path resolved relative to file location
 
 model/
@@ -67,6 +87,9 @@ model/
   GitStatusFile.py              # Per-file model: state (modified/new file/deleted) + filename
   Release.py                    # A tagged release with associated Issues
   Issue.py                      # A single issue (number + title)
+
+documents/                      # Markdown help files, one per CLI command
+  add.md, status.md, issues.md, notes.md, raw.md, tui.md, version.md
 
 README.md
 LICENSE.md
@@ -98,11 +121,16 @@ python main.py version          # Print version from pyproject.toml
 
 - **Textual widgets**: UI components subclass `Static`, `ModalScreen`, or `App`. Compose the widget tree in `compose()`.
 - **CSS**: Styles live in `.tcss` files co-located with their widgets. `CSS_PATH` in `MenuApp` lists them as paths relative to `TUI/MenuApp.py` (e.g. `"commit/git_commit.tcss"`). All CSS files must be listed to take effect.
+- **Menu positioning**: Menus use `align: left top` on the modal and a fixed `margin-left` on the list widget to position the dropdown under the correct menu bar label. Values are in `menu_app.tcss`.
+- **Menu dismiss**: All menus dismiss on Escape (via `BINDINGS`) and on clicking the backdrop (`on_click` checks `event.widget is self`).
 - **Git access**: All git operations go through `GitManager`, which shells out via `subprocess`.
+- **Git flow**: `flow_release_finish` auto-detects `main` vs `master` using `_detect_main_branch()` (`git show-ref --verify refs/heads/main`).
+- **Staging view**: `GitStagingView` shows staged, unstaged, and untracked files. State labels are color-coded: green=new, yellow=modified, red=deleted, cyan=renamed, muted=untracked. Double-click to stage/unstage.
+- **Help system**: `HelpMenu` lists doc topics + "About Gitter". Selecting a topic opens `MarkdownViewerModal` with the file from `documents/`. "About Gitter" opens `AboutGitter`.
 - **Logging**: Use `GitterLogger.log(...)` (defined in `TUI/debug/rich_log.py`) instead of `print`.
 - **Timer-based refresh**: `ProjectView.on_mount` sets a 90-second interval calling `update_all()`.
 - **Commit flow**: `Ctrl+K` opens `GitCommitModal` for the selected project. The modal auto-fills type/issue/summary from the branch name (e.g. `feature/GIT-15_My_summary`). Dismisses with `(message, add_unstaged)`.
-- **Git menu**: `Ctrl+G` (or clicking "Git" in the menu bar) opens `GitMenu` for Pull, Fetch, and Push on the selected project. Results are logged via `GitterLogger`; Pull and Fetch also refresh the project view on success.
+- **Git menu**: `Ctrl+G` (or clicking "Git" in the menu bar) opens `GitMenu`. Start/Finish Feature enabled on feature branches; Start/Finish Release enabled on develop/release branches.
 - **Python version**: Targets Python 3.9+. Use `Optional[X]` instead of `X | None` and `from __future__ import annotations` for forward references.
 
 ## Branch strategy

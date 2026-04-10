@@ -8,7 +8,7 @@ class MenuBar(Static):
     def compose(self) -> ComposeResult:
         with Horizontal():
             yield Label("File", id="file_menu_label")
-            yield Label("Edit")
+            # yield Label("Edit")
             yield Label("View", id="view_menu_label")
             yield Label("Git", id="git_menu_label")
-            yield Label("Help")
+            yield Label("Help", id="help_menu_label")

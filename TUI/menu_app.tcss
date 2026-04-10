@@ -30,6 +30,10 @@ GitMenu {
     align: left top;
 }
 
+HelpMenu {
+    align: left top;
+}
+
 #menu_list {
     width: 20;
     height: auto;
@@ -53,6 +57,15 @@ GitMenu {
     height: auto;
     margin-top: 1;
     margin-left: 14;
+    border: solid white;
+    background: blue;
+}
+
+#help_menu_list {
+    width: auto;
+    height: auto;
+    margin-top: 1;
+    margin-left: 33;
     border: solid white;
     background: blue;
 }

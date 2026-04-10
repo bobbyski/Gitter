@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from rich.text import Text
 from textual import on, events
 from textual.app import App, ComposeResult
 from textual.message import Message
@@ -37,6 +38,28 @@ class ProjectView(Static):
         self.classes = self.main_container_class()
         self.selected_project = None
 
+    @staticmethod
+    def _issues_label(project) -> Text:
+        release_name = project.first_issues_release_name()
+        issues_str = project.issues_string_for_release()
+        text = Text(issues_str)
+        if release_name == "Next release":
+            text.stylize("yellow")
+        return text
+
+    @staticmethod
+    def _project_name_label(project) -> Text:
+        s = project.status
+        has_changes = s is not None and (
+            s.state != "up to date"
+            or len(s.stagedFiles) > 0
+            or len(s.unstagedFiles) > 0
+            or len(s.filesUntracked) > 0
+        )
+        text = Text(project.name)
+        text.stylize("yellow" if has_changes else "green")
+        return text
+
     def main_container_class(self):
         return f"project_view {self.widthClass}"
 
@@ -56,11 +79,11 @@ class ProjectView(Static):
             with VerticalScroll(id="project_list"):
                 for i, project in enumerate(self.projects):
                     row = Horizontal(
-                        Label(project.name, classes="name"),
+                        Label(self._project_name_label(project), classes="name"),
                         Label(f"{project.release_summary()}", classes="release"),
-                        Label(project.directory, classes="directory"),
-                        Label(f"{project.status}", classes="status"),
-                        Label(f"{project.issues_string_for_release()}", classes="issues_list"),
+                        Label(project.directory.replace(str(Path.home()), "~"), classes="directory"),
+                        Label(project.status.to_rich() if project.status else "", classes="status"),
+                        Label(self._issues_label(project), classes="issues_list"),
                         classes="row",
                         id=f"project_row_{i}"
                     )
@@ -105,9 +128,9 @@ class ProjectView(Static):
 
         for project in self.projects:
             row = Horizontal(
-                Label(project.name, classes="name"),
-                Label(project.directory, classes="directory"),
-                Label(f"{project.status}", classes="status"),
+                Label(self._project_name_label(project), classes="name"),
+                Label(project.directory.replace(str(Path.home()), "~"), classes="directory"),
+                Label(project.status.to_rich() if project.status else "", classes="status"),
                 classes="row"
             )
             row.can_focus = True

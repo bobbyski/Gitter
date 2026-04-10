@@ -14,8 +14,8 @@ class FileMenu(ModalScreen[str]):
     def compose(self) -> ComposeResult:
         yield OptionList(
             "New",
-            "Open",
-            "Save",
+            # "Open",
+            # "Save",
             "---",
             "Quit",
             id="menu_list"

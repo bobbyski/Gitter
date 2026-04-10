@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ## Project structure
 
 ```
-main.py                         # CLI entry point — add, status, issues, notes, raw, tui, version subcommands
+main.py                         # CLI entry point — add, status, issues, notes, raw, tui, version, help subcommands
 
 TUI/
   MenuApp.py                    # App class — wires together MenuBar, ProjectView, ReleaseNotes, LogWindow
@@ -45,7 +45,8 @@ TUI/
     finish_release.tcss
 
   Help/
-    help_menu.py                # HelpMenu modal — lists About Gitter + all doc topics; dismisses with label string
+    help_menu.py                # HelpMenu modal — About Gitter, doc topics, separator, License at bottom;
+                                #   HELP_TOPICS list + ABOUT_LABEL + LICENSE_LABEL/LICENSE_FILE constants
     markdown_viewer.py          # MarkdownViewerModal — scrollable modal for displaying markdown content
     about_gitter.py             # AboutGitter modal — version, description, credits, copyright
     markdown_viewer.tcss
@@ -74,7 +75,8 @@ TUI/
 BusinessLogic/
   GitManager.py                 # Runs git CLI commands via subprocess:
                                 #   get_status, get_logs, commit, stage, stage_all, unstage, unstage_all,
-                                #   push, pull, fetch, flow_feature_start, flow_feature_finish,
+                                #   push, push_main_and_develop, pull, fetch,
+                                #   flow_feature_start, flow_feature_finish,
                                 #   flow_release_start, flow_release_finish, _detect_main_branch
   toml_helper.py                # Reads version from pyproject.toml; path resolved relative to file location
 
@@ -88,8 +90,8 @@ model/
   Release.py                    # A tagged release with associated Issues
   Issue.py                      # A single issue (number + title)
 
-documents/                      # Markdown help files, one per CLI command
-  add.md, status.md, issues.md, notes.md, raw.md, tui.md, version.md
+documents/                      # Markdown help files (one per CLI command + license)
+  add.md, status.md, issues.md, notes.md, raw.md, tui.md, version.md, help.md, license.md
 
 README.md
 LICENSE.md
@@ -115,6 +117,7 @@ python main.py notes -m         # Render as Markdown
 python main.py raw              # Raw Markdown release notes (no formatting)
 python main.py tui              # Launch the Textual TUI
 python main.py version          # Print version from pyproject.toml
+python main.py help TOPIC       # Display help doc for a topic (e.g. help tui)
 ```
 
 ## Key patterns
@@ -126,11 +129,12 @@ python main.py version          # Print version from pyproject.toml
 - **Git access**: All git operations go through `GitManager`, which shells out via `subprocess`.
 - **Git flow**: `flow_release_finish` auto-detects `main` vs `master` using `_detect_main_branch()` (`git show-ref --verify refs/heads/main`).
 - **Staging view**: `GitStagingView` shows staged, unstaged, and untracked files. State labels are color-coded: green=new, yellow=modified, red=deleted, cyan=renamed, muted=untracked. Double-click to stage/unstage.
-- **Help system**: `HelpMenu` lists doc topics + "About Gitter". Selecting a topic opens `MarkdownViewerModal` with the file from `documents/`. "About Gitter" opens `AboutGitter`.
+- **Help system**: `HelpMenu` lists About Gitter, doc topics (from `HELP_TOPICS`), and License (after a separator). Selecting a topic opens `MarkdownViewerModal` with the matching file from `documents/`. "About Gitter" opens `AboutGitter`. CLI: `python main.py help <topic>` renders the matching `.md` file.
+- **Project view colors**: Project name is green (up to date) or yellow (has changes). Status column uses `GitStatus.to_rich()`. Issues column is yellow when showing "Next release" items. Directory column replaces home dir with `~`.
 - **Logging**: Use `GitterLogger.log(...)` (defined in `TUI/debug/rich_log.py`) instead of `print`.
 - **Timer-based refresh**: `ProjectView.on_mount` sets a 90-second interval calling `update_all()`.
 - **Commit flow**: `Ctrl+K` opens `GitCommitModal` for the selected project. The modal auto-fills type/issue/summary from the branch name (e.g. `feature/GIT-15_My_summary`). Dismisses with `(message, add_unstaged)`.
-- **Git menu**: `Ctrl+G` (or clicking "Git" in the menu bar) opens `GitMenu`. Start/Finish Feature enabled on feature branches; Start/Finish Release enabled on develop/release branches.
+- **Git menu**: `Ctrl+G` (or clicking "Git" in the menu bar) opens `GitMenu`. Pull/Fetch/Push/Commit disabled when no project selected. "Push Master and Develop" pushes both branches and is only enabled on `develop`. Start/Finish Feature enabled on feature branches; Start/Finish Release enabled on develop/release branches. GitMenu takes `branch` and `project_selected` parameters.
 - **Python version**: Targets Python 3.9+. Use `Optional[X]` instead of `X | None` and `from __future__ import annotations` for forward references.
 
 ## Branch strategy

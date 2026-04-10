@@ -5,7 +5,7 @@ Output raw Markdown release notes without any formatting or rendering.
 ## Usage
 
 ```
-python main.py raw [-p PROJECT] [-r RELEASE]
+gitter raw [-p PROJECT] [-r RELEASE]
 ```
 
 ## Options
@@ -24,19 +24,19 @@ Plain Markdown text printed to stdout with no Rich formatting applied. Suitable 
 Print raw Markdown for all projects:
 
 ```bash
-python main.py raw
+gitter raw
 ```
 
 Print raw Markdown for a specific project:
 
 ```bash
-python main.py raw -p "My Project"
+gitter raw -p "My Project"
 ```
 
 Save release notes to a file:
 
 ```bash
-python main.py raw -p "My Project" > RELEASE_NOTES.md
+gitter raw -p "My Project" > RELEASE_NOTES.md
 ```
 
 ## Notes

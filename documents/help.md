@@ -5,7 +5,7 @@ Display help documentation for a Gitter command.
 ## Usage
 
 ```
-python main.py help <topic>
+gitter help <topic>
 ```
 
 ## Arguments
@@ -32,13 +32,13 @@ python main.py help <topic>
 Show help for the `tui` command:
 
 ```bash
-python main.py help tui
+gitter help tui
 ```
 
 Show help for the `issues` command:
 
 ```bash
-python main.py help issues
+gitter help issues
 ```
 
 ## Notes

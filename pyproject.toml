@@ -1,6 +1,6 @@
 [project]
 name = "gitterApp"
-version = "0.1.12"
+version = "0.1.13"
 readme = "README.md"
 description = "Git repo manager get status of multiple git repos in one place"
 requires-python = ">=3.9"
@@ -18,6 +18,28 @@ py-modules = ["main"]
 
 [tool.setuptools.packages.find]
 include = ["model*", "BusinessLogic*", "TUI*"]
+
+[tool.setuptools.package-data]
+"TUI" = ["*.tcss"]
+"TUI.Menu" = ["*.tcss"]
+"TUI.GitFlow" = ["*.tcss"]
+"TUI.Help" = ["*.tcss"]
+"TUI.project" = ["*.tcss"]
+"TUI.commit" = ["*.tcss"]
+"TUI.debug" = ["*.tcss"]
+
+[tool.setuptools.data-files]
+"gitter/documents" = [
+    "documents/add.md",
+    "documents/status.md",
+    "documents/issues.md",
+    "documents/notes.md",
+    "documents/raw.md",
+    "documents/tui.md",
+    "documents/version.md",
+    "documents/help.md",
+    "documents/license.md",
+]
 
 [dependency-groups]
 dev = [

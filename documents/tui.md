@@ -5,7 +5,7 @@ Launch the Gitter terminal user interface (TUI).
 ## Usage
 
 ```
-python main.py tui
+gitter tui
 ```
 
 ## Options
@@ -56,5 +56,5 @@ Accessible via `Ctrl+G` or clicking "Git" in the menu bar:
 
 ## Notes
 
-- Projects must be added first with `python main.py add`.
+- Projects must be added first with `gitter add`.
 - All git operations are performed via the native `git` CLI.

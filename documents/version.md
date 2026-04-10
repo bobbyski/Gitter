@@ -5,7 +5,7 @@ Print the current Gitter version.
 ## Usage
 
 ```
-python main.py version
+gitter version
 ```
 
 ## Options
@@ -23,7 +23,7 @@ Version 0.1.0
 ## Example
 
 ```bash
-python main.py version
+gitter version
 ```
 
 ## Notes

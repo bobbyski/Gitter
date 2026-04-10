@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
+from importlib.metadata import version, PackageNotFoundError
+
 
 class TomlHelper:
-    def __init__(self):
-        self.filename = Path(__file__).parent.parent / "pyproject.toml"
+    """Helper class for reading package metadata."""
 
-    """Helper class for working with TOML files."""
     def get_version(self) -> str:
-        with open(self.filename, "r") as file:
-            for line in file:
-                strip_line = line.strip()
-                if strip_line.startswith("version"):
-                    return strip_line.split("=")[1].strip()
+        try:
+            return version("gitterApp")
+        except PackageNotFoundError:
+            pass
 
-        return "ERROR: Version not found in pyproject.toml"
+        # Fallback: read pyproject.toml directly (dev environment)
+        from pathlib import Path
+        toml_path = Path(__file__).parent.parent / "pyproject.toml"
+        if toml_path.exists():
+            with open(toml_path, "r") as file:
+                for line in file:
+                    strip_line = line.strip()
+                    if strip_line.startswith("version"):
+                        return strip_line.split("=")[1].strip().strip('"')
+
+        return "unknown"
 
 
 if __name__ == "__main__":

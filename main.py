@@ -26,6 +26,8 @@ def build_parser():
     subparsers.add_parser('version', help='show version information', aliases=['Version', 'VERSION'] )
     subparsers.add_parser('notes', help='Show release notes markdown without formatting', aliases=['Notes', 'NOTES'] )
     subparsers.add_parser('raw', help='Show release notes markdown without formatting', aliases=['Raw', 'RAW'] )
+    help_parser = subparsers.add_parser('help', help='Show help for a topic', aliases=['Help', 'HELP'])
+    help_parser.add_argument('topic', type=str, help='Topic to show help for (e.g. add, status, tui)')
 
     parser.add_argument( '-p', '--project', type=str, help='Project name to show')
     parser.add_argument( '-r', '--release', type=str, help='The release number to show')
@@ -34,6 +36,15 @@ def build_parser():
     parser.add_argument( '-t', '--theme', type=str, help='The theme to use', default='monokai')
 
     return parser
+
+def show_help(topic: str):
+    docs_dir = Path(__file__).parent / "documents"
+    doc_path = docs_dir / f"{topic.lower()}.md"
+    if not doc_path.exists():
+        Console().print(f"[red]No help available for '{topic}'.[/red]")
+        return
+    markdown = Markdown(doc_path.read_text())
+    Console().print(markdown)
 
 def show_version(version):
     """Display the version information and exit."""
@@ -171,6 +182,8 @@ if __name__ == '__main__':
         pathname = str(Path.home() / ".gitter")
         MainFileManager.load_shared_from_json(pathname)
         add_project(args.project)
+    elif parser.parse_args().command.lower() == 'help':
+        show_help(args.topic)
     else:
         pathname = str(Path.home() / ".gitter")
         MainFileManager.load_shared_from_json(pathname)

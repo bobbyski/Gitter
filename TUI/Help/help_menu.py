@@ -13,9 +13,12 @@ HELP_TOPICS = [
     ("Raw",     "raw.md"),
     ("TUI",     "tui.md"),
     ("Version", "version.md"),
+    ("Help",    "help.md"),
 ]
 
 ABOUT_LABEL = "About Gitter"
+LICENSE_LABEL = "License"
+LICENSE_FILE = "license.md"
 
 
 class HelpMenu(ModalScreen[str]):
@@ -28,6 +31,8 @@ class HelpMenu(ModalScreen[str]):
             ABOUT_LABEL,
             "---",
             *[label for label, _ in HELP_TOPICS],
+            "---",
+            LICENSE_LABEL,
             id="help_menu_list",
         )
 

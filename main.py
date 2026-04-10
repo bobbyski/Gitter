@@ -168,21 +168,21 @@ def notes(project_name=None, release_name=None, markdown=False, raw=False, code_
         else:
             console.print(project.release_notes( release_name=release_name ))
 
-if __name__ == '__main__':
+def main():
     parser = build_parser()
     args = parser.parse_args()
 
-    if parser.parse_args().command.lower() == 'tui':
+    if args.command.lower() == 'tui':
         from TUI.MenuApp import MenuApp
         app = MenuApp()
         app.run()
-    elif parser.parse_args().command.lower() == 'version':
+    elif args.command.lower() == 'version':
         show_version('0.1.0')
-    elif parser.parse_args().command.lower() == 'add':
+    elif args.command.lower() == 'add':
         pathname = str(Path.home() / ".gitter")
         MainFileManager.load_shared_from_json(pathname)
         add_project(args.project)
-    elif parser.parse_args().command.lower() == 'help':
+    elif args.command.lower() == 'help':
         show_help(args.topic)
     else:
         pathname = str(Path.home() / ".gitter")
@@ -191,12 +191,15 @@ if __name__ == '__main__':
         for project in MainFileManager.shared.projects:
             project.update()
 
-        if parser.parse_args().command.lower() == 'status':
+        if args.command.lower() == 'status':
             status()
-        elif parser.parse_args().command.lower() == 'issues':
+        elif args.command.lower() == 'issues':
             issues( args.project, args.release )
-        elif parser.parse_args().command.lower() == 'notes':
+        elif args.command.lower() == 'notes':
             notes( args.project, args.release, markdown=args.markdown, raw=False, code_theme=args.theme )
-        elif parser.parse_args().command.lower() == 'raw':
+        elif args.command.lower() == 'raw':
             notes( args.project, args.release, markdown=False, raw=True )
+
+if __name__ == '__main__':
+    main()
 

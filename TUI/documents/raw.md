@@ -5,7 +5,7 @@ Output raw Markdown release notes without any formatting or rendering.
 ## Usage
 
 ```
-gitter raw [-p PROJECT] [-r RELEASE]
+gitter [-p PROJECT] [-r RELEASE] raw
 ```
 
 ## Options
@@ -30,13 +30,13 @@ gitter raw
 Print raw Markdown for a specific project:
 
 ```bash
-gitter raw -p "My Project"
+gitter -p "My Project" raw
 ```
 
 Save release notes to a file:
 
 ```bash
-gitter raw -p "My Project" > RELEASE_NOTES.md
+gitter -p "My Project" raw > RELEASE_NOTES.md
 ```
 
 ## Notes

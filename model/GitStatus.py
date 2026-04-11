@@ -108,6 +108,43 @@ class GitStatus:
 
         return text
 
+    def to_long_rich(self) -> Text:
+        text = Text()
+
+        if self.state != "":
+            text.append(f"{self.state}\n", style="green")
+
+        if len(self.filesAdded) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"   {len(self.filesAdded)} new files\n", style="green")
+
+        if len(self.filesModified) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"   {len(self.filesModified)} modified files\n", style="yellow")
+
+        if len(self.filesDeleted) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"   {len(self.filesDeleted)} deleted files\n", style="red")
+
+        if len(self.filesUntracked) > 0:
+            if len(text) > 0:
+                text.append(" ")
+            text.append(f"   {len(self.filesUntracked)} untracked files\n")
+
+        if len(text) > 0:
+            text.append(" ")
+
+        if self.branch != "":
+            if self.branch == "develop" or self.branch == "main" or self.branch == "master":
+                text.append(f"Currently on {self.branch}\n", style="green")
+            else:
+                text.append(f"Currently on {self.branch}\n", style="blue")
+
+        return text
+
     def __repr__(self):
         result = ""
 

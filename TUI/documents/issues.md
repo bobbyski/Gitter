@@ -5,7 +5,7 @@ Display a table of issues grouped by project and release.
 ## Usage
 
 ```
-gitter issues [-p PROJECT] [-r RELEASE]
+gitter [-p PROJECT] [-r RELEASE] issues
 ```
 
 ## Options
@@ -39,19 +39,19 @@ gitter issues
 Show issues for a specific project:
 
 ```bash
-gitter issues -p "My Project"
+gitter -p "My Project" issues
 ```
 
 Show issues for a specific release:
 
 ```bash
-gitter issues -r 1.2.0
+gitter -r 1.2.0 issues
 ```
 
 Combine filters:
 
 ```bash
-gitter issues -p "My Project" -r 1.2.0
+gitter -p "My Project" -r 1.2.0 issues
 ```
 
 ## Notes

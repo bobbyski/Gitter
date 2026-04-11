@@ -5,7 +5,7 @@ Display formatted release notes for tracked projects.
 ## Usage
 
 ```
-gitter notes [-p PROJECT] [-r RELEASE] [-m] [-t THEME]
+gitter [-p PROJECT] [-r RELEASE] [-m] [-t THEME] notes
 ```
 
 ## Options
@@ -32,25 +32,25 @@ gitter notes
 Show release notes for a specific project:
 
 ```bash
-gitter notes -p "My Project"
+gitter -p "My Project" notes
 ```
 
 Show release notes for a specific release:
 
 ```bash
-gitter notes -r 1.2.0
+gitter -r 1.2.0 notes
 ```
 
 Render as Markdown:
 
 ```bash
-gitter notes -m
+gitter -m notes
 ```
 
 Render as Markdown with a custom theme:
 
 ```bash
-gitter notes -m -t github-dark
+gitter -m -t github-dark notes
 ```
 
 ## Notes

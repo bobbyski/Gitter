@@ -5,7 +5,7 @@ Display help documentation for a Gitter command.
 ## Usage
 
 ```
-gitter help <topic>
+gitter <topic> help
 ```
 
 ## Arguments
@@ -32,13 +32,13 @@ gitter help <topic>
 Show help for the `tui` command:
 
 ```bash
-gitter help tui
+gitter tui help
 ```
 
 Show help for the `issues` command:
 
 ```bash
-gitter help issues
+gitter issues help
 ```
 
 ## Notes

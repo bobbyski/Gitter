@@ -5,7 +5,7 @@ Add the current working directory as a tracked project in Gitter.
 ## Usage
 
 ```
-gitter add [-p NAME]
+gitter [-p NAME] add
 ```
 
 ## Options
@@ -26,7 +26,7 @@ gitter add
 Add the current directory with a custom name:
 
 ```bash
-gitter add -p "My Project"
+gitter -p "My Project" add
 ```
 
 ## Notes

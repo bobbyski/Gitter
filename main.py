@@ -38,13 +38,12 @@ def build_parser():
     return parser
 
 def show_help(topic: str):
-    docs_dir = Path(__file__).parent / "documents"
-    doc_path = docs_dir / f"{topic.lower()}.md"
-    if not doc_path.exists():
+    from BusinessLogic.docs_helper import get_document
+    content = get_document(f"{topic.lower()}.md")
+    if content is None:
         Console().print(f"[red]No help available for '{topic}'.[/red]")
         return
-    markdown = Markdown(doc_path.read_text())
-    Console().print(markdown)
+    Console().print(Markdown(content))
 
 def show_version(version):
     """Display the version information and exit."""

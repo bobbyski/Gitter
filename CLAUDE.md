@@ -78,7 +78,9 @@ BusinessLogic/
                                 #   push, push_main_and_develop, pull, fetch,
                                 #   flow_feature_start, flow_feature_finish,
                                 #   flow_release_start, flow_release_finish, _detect_main_branch
-  toml_helper.py                # Reads version from pyproject.toml; path resolved relative to file location
+  toml_helper.py                # Reads version via importlib.metadata; falls back to pyproject.toml in dev
+  docs_helper.py                # get_document(filename) — reads from TUI/documents/ via importlib.resources,
+                                #   with Path-based fallback for dev environments
 
 model/
   MainFile.py                   # Top-level data model: name + list of Projects
@@ -105,19 +107,19 @@ Projects are stored in `~/.gitter` as JSON, managed by `MainFileManager`. On sta
 ## CLI usage
 
 ```bash
-python main.py add              # Add current directory as a project (name = directory name)
-python main.py add -p NAME      # Add current directory with a custom name
-python main.py status           # Rich table of all projects with status, release, issues
-python main.py issues           # Rich table of issues grouped by project and release
-python main.py issues -p NAME   # Filter by project name
-python main.py issues -r TAG    # Filter by release tag
-python main.py notes            # Formatted release notes
-python main.py notes -p NAME    # Release notes for one project
-python main.py notes -m         # Render as Markdown
-python main.py raw              # Raw Markdown release notes (no formatting)
-python main.py tui              # Launch the Textual TUI
-python main.py version          # Print version from pyproject.toml
-python main.py help TOPIC       # Display help doc for a topic (e.g. help tui)
+gitter add                      # Add current directory as a project (name = directory name)
+gitter -p NAME add              # Add current directory with a custom name
+gitter status                   # Rich table of all projects with status, release, issues
+gitter issues                   # Rich table of issues grouped by project and release
+gitter -p NAME issues           # Filter by project name
+gitter -r TAG issues            # Filter by release tag
+gitter notes                    # Formatted release notes
+gitter -p NAME notes            # Release notes for one project
+gitter -m notes                 # Render as Markdown
+gitter raw                      # Raw Markdown release notes (no formatting)
+gitter tui                      # Launch the Textual TUI
+gitter version                  # Print version
+gitter help TOPIC               # Display help doc for a topic (e.g. help tui)
 ```
 
 ## Key patterns
@@ -129,7 +131,8 @@ python main.py help TOPIC       # Display help doc for a topic (e.g. help tui)
 - **Git access**: All git operations go through `GitManager`, which shells out via `subprocess`.
 - **Git flow**: `flow_release_finish` auto-detects `main` vs `master` using `_detect_main_branch()` (`git show-ref --verify refs/heads/main`).
 - **Staging view**: `GitStagingView` shows staged, unstaged, and untracked files. State labels are color-coded: green=new, yellow=modified, red=deleted, cyan=renamed, muted=untracked. Double-click to stage/unstage.
-- **Help system**: `HelpMenu` lists About Gitter, doc topics (from `HELP_TOPICS`), and License (after a separator). Selecting a topic opens `MarkdownViewerModal` with the matching file from `TUI/documents/`. "About Gitter" opens `AboutGitter`. CLI: `gitter help <topic>` renders the matching `.md` file. All docs accessed via `BusinessLogic/docs_helper.get_document()` which uses `importlib.resources.files("TUI")` — works in dev and when installed via pip.
+- **Help system**: `HelpMenu` lists About Gitter, doc topics (from `HELP_TOPICS`), and License (after a separator). Selecting a topic opens `MarkdownViewerModal` with the matching file from `TUI/documents/`. "About Gitter" opens `AboutGitter`. CLI: `gitter help <topic>` renders the matching `.md` file. All docs accessed via `BusinessLogic/docs_helper.get_document(filename)` — tries `importlib.resources.files("TUI")` first, falls back to `Path(__file__).parent.parent / "TUI" / "documents"` for dev.
+- **Documents**: Single source of truth is `TUI/documents/`. Declared as package data in `pyproject.toml` (`"TUI" = ["*.tcss", "documents/*.md"]`) so they are bundled in the wheel.
 - **Project view colors**: Project name is green (up to date) or yellow (has changes). Status column uses `GitStatus.to_rich()`. Issues column is yellow when showing "Next release" items. Directory column replaces home dir with `~`.
 - **Logging**: Use `GitterLogger.log(...)` (defined in `TUI/debug/rich_log.py`) instead of `print`.
 - **Timer-based refresh**: `ProjectView.on_mount` sets a 90-second interval calling `update_all()`.

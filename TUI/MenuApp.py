@@ -235,13 +235,12 @@ class MenuApp(App):
             filename = next((f for l, f in HELP_TOPICS if l == result), None)
         if not filename:
             return
-        docs_path = Path(__file__).parent.parent / "documents" / filename
-        if not docs_path.exists():
-            GitterLogger.log(f"Help file not found: {docs_path}")
+        from BusinessLogic.docs_helper import get_document
+        content = get_document(filename)
+        if content is None:
+            GitterLogger.log(f"Help file not found: {filename}")
             return
-        content = docs_path.read_text()
-        title = result
-        self.push_screen(MarkdownViewerModal(content, title=title))
+        self.push_screen(MarkdownViewerModal(content, title=result))
 
     def on_start_release_result(self, version: Optional[str]) -> None:
         if not version:

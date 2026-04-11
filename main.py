@@ -19,7 +19,6 @@ def build_parser():
 
     subparsers = parser.add_subparsers(title='commands', dest='command', required=True)
     add_parser = subparsers.add_parser('add', help='Add current directory as a project', aliases=['Add', 'ADD'])
-    add_parser.add_argument('-p', '--project', type=str, help='Name for the project (defaults to directory name)')
     subparsers.add_parser('status', help='Show status of all projects', aliases=['Status', 'STATUS'])
     subparsers.add_parser('tui', help='Open TUI viewer', aliases=['TUI', 'tui'])
     subparsers.add_parser('issues', help='Show issues for projects', aliases=['Issues', 'ISSUES'])

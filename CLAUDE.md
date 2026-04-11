@@ -90,7 +90,7 @@ model/
   Release.py                    # A tagged release with associated Issues
   Issue.py                      # A single issue (number + title)
 
-documents/                      # Markdown help files (one per CLI command + license)
+TUI/documents/                  # Markdown help files bundled as package data (single source of truth)
   add.md, status.md, issues.md, notes.md, raw.md, tui.md, version.md, help.md, license.md
 
 README.md
@@ -129,7 +129,7 @@ python main.py help TOPIC       # Display help doc for a topic (e.g. help tui)
 - **Git access**: All git operations go through `GitManager`, which shells out via `subprocess`.
 - **Git flow**: `flow_release_finish` auto-detects `main` vs `master` using `_detect_main_branch()` (`git show-ref --verify refs/heads/main`).
 - **Staging view**: `GitStagingView` shows staged, unstaged, and untracked files. State labels are color-coded: green=new, yellow=modified, red=deleted, cyan=renamed, muted=untracked. Double-click to stage/unstage.
-- **Help system**: `HelpMenu` lists About Gitter, doc topics (from `HELP_TOPICS`), and License (after a separator). Selecting a topic opens `MarkdownViewerModal` with the matching file from `documents/`. "About Gitter" opens `AboutGitter`. CLI: `python main.py help <topic>` renders the matching `.md` file.
+- **Help system**: `HelpMenu` lists About Gitter, doc topics (from `HELP_TOPICS`), and License (after a separator). Selecting a topic opens `MarkdownViewerModal` with the matching file from `TUI/documents/`. "About Gitter" opens `AboutGitter`. CLI: `gitter help <topic>` renders the matching `.md` file. All docs accessed via `BusinessLogic/docs_helper.get_document()` which uses `importlib.resources.files("TUI")` — works in dev and when installed via pip.
 - **Project view colors**: Project name is green (up to date) or yellow (has changes). Status column uses `GitStatus.to_rich()`. Issues column is yellow when showing "Next release" items. Directory column replaces home dir with `~`.
 - **Logging**: Use `GitterLogger.log(...)` (defined in `TUI/debug/rich_log.py`) instead of `print`.
 - **Timer-based refresh**: `ProjectView.on_mount` sets a 90-second interval calling `update_all()`.

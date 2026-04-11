@@ -8,21 +8,19 @@ class TomlHelper:
 
     def get_version(self) -> str:
         try:
-            return version("gitterApp")
-        except PackageNotFoundError:
+            from pathlib import Path
+            toml_path = Path(__file__).parent.parent / "pyproject.toml"
+            if toml_path.exists():
+                with open(toml_path, "r") as file:
+                    for line in file:
+                        strip_line = line.strip()
+                        if strip_line.startswith("version"):
+                            return strip_line.split("=")[1].strip().strip('"')
+        except ( Exception ):
             pass
 
-        # Fallback: read pyproject.toml directly (dev environment)
-        from pathlib import Path
-        toml_path = Path(__file__).parent.parent / "pyproject.toml"
-        if toml_path.exists():
-            with open(toml_path, "r") as file:
-                for line in file:
-                    strip_line = line.strip()
-                    if strip_line.startswith("version"):
-                        return strip_line.split("=")[1].strip().strip('"')
-
-        return "unknown"
+        # if not dev then read the metadata
+        return version("gitterApp")
 
 
 if __name__ == "__main__":

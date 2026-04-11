@@ -37,3 +37,50 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Create source archive
+        run: |
+          git archive --format=tar.gz --prefix=gitter-${{ github.ref_name }}/ HEAD > gitter-${{ github.ref_name }}.tar.gz
+
+      - name: Calculate SHA256
+        id: sha
+        run: |
+          echo "sha256=$(shasum -a 256 gitter-${{ github.ref_name }}.tar.gz | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+      - name: Checkout tap repo
+        uses: actions/checkout@v4
+        with:
+          repository: bobbyski/homebrew-gitter
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: tap
+
+      - name: Update Homebrew formula
+        run: |
+          FORMULA_PATH=tap/Formula/gitter.rb
+          VERSION=${{ github.ref_name }}
+          SHA=${{ steps.sha.outputs.sha256 }}
+
+          cat > $FORMULA_PATH <<EOF
+          class Gitter < Formula
+            desc "Your package description"
+            homepage "https://github.com/bobbyski/Gitter"
+            url "https://github.com/bobbyski/Gitter/archive/refs/tags/${VERSION}.tar.gz"
+            sha256 "${SHA}"
+            license "MIT"
+          
+            depends_on "python@3.11"
+          
+            def install
+              system "pip3", "install", ".", "--prefix=\#{prefix}"
+            end
+          end
+          EOF
+
+      - name: Commit and push formula
+        run: |
+          cd tap
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add Formula/gitter.rb
+          git commit -m "Update gitter to ${{ github.ref_name }}"
+          git push

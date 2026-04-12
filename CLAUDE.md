@@ -95,6 +95,16 @@ model/
 TUI/documents/                  # Markdown help files bundled as package data (single source of truth)
   add.md, status.md, issues.md, notes.md, raw.md, tui.md, version.md, help.md, license.md
 
+tests/
+  conftest.py             # sys.path setup for test imports
+  test_git_log.py
+  test_git_status.py
+  test_git_manager.py
+  test_toml_helper.py
+  test_docs_helper.py
+  test_release.py
+  test_project.py
+
 README.md
 LICENSE.md
 pyproject.toml
@@ -139,6 +149,42 @@ gitter help TOPIC               # Display help doc for a topic (e.g. help tui)
 - **Commit flow**: `Ctrl+K` opens `GitCommitModal` for the selected project. The modal auto-fills type/issue/summary from the branch name (e.g. `feature/GIT-15_My_summary`). Dismisses with `(message, add_unstaged)`.
 - **Git menu**: `Ctrl+G` (or clicking "Git" in the menu bar) opens `GitMenu`. Pull/Fetch/Push/Commit disabled when no project selected. "Push Master and Develop" pushes both branches and is only enabled on `develop`. Start/Finish Feature enabled on feature branches; Start/Finish Release enabled on develop/release branches. GitMenu takes `branch` and `project_selected` parameters.
 - **Python version**: Targets Python 3.9+. Use `Optional[X]` instead of `X | None` and `from __future__ import annotations` for forward references.
+
+## Running tests
+
+Unit tests live in `tests/` and cover `BusinessLogic/` and `model/`. Run them from the project root:
+
+```bash
+pytest tests/
+```
+
+For verbose output:
+
+```bash
+pytest tests/ -v
+```
+
+Requires `pytest` (not in `requirements.txt` — install separately):
+
+```bash
+pip install pytest
+```
+
+**Test files:**
+
+```
+tests/
+  conftest.py           # adds project root to sys.path
+  test_git_log.py       # GitLog.parse_logstring, get_release, get_issue
+  test_git_status.py    # GitStatus.process_status_response, to_rich, repr
+  test_git_manager.py   # GitManager — all methods, subprocess mocked
+  test_toml_helper.py   # TomlHelper.get_version
+  test_docs_helper.py   # docs_helper.get_document
+  test_release.py       # Release.has_issue, issues_list
+  test_project.py       # Project.process_commits, strip_issue, release notes
+```
+
+`GitManager` tests mock `subprocess.run` — no real git calls are made.
 
 ## Branch strategy
 

@@ -1,9 +1,7 @@
 name: Publish to Homebrew
 
 on:
-  push:
-    tags:
-      - "*.*.*"
+  workflow_dispatch:  # disabled: change to push/tags to re-enable
 
 jobs:
   publish:

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/bobby/PycharmProjects/Gitter diff origin/develop -- README.md)",
+      "Bash(gh run:*)"
+    ]
+  }
+}

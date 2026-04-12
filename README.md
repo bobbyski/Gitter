@@ -1,5 +1,10 @@
 # Gitter
 
+[![PyPI version](https://img.shields.io/pypi/v/gitterapp.svg)](https://pypi.python.org/pypi/gitterapp)
+[![Python versions](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://pypi.python.org/pypi/gitter-tui)
+[![Build status](https://img.shields.io/github/actions/workflow/status/bobbyski/Gitter/tests.yml?branch=develop)](https://github.com/bobbyski/Gitter/actions)
+[![License](https://img.shields.io/github/license/bobbyski/Gitter.svg)](https://github.com/bobbyski/Gitter/blob/develop/LICENSE.md)
+
 A terminal dashboard for monitoring multiple Git repositories. Built with Python and [Textual](https://github.com/Textualize/textual).
 
 ![Gitter dashboard](images/ProjectView.jpg)

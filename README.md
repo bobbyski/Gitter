@@ -2,9 +2,12 @@
 
 A terminal dashboard for monitoring multiple Git repositories. Built with Python and [Textual](https://github.com/Textualize/textual).
 
+![Gitter dashboard](images/ProjectView.jpg)
+
 Gitter shows the status, current release, and upcoming issues for all your configured repos at a glance — and lets you stage files and write commits without leaving the terminal.
 
 ---
+
 
 ## Features
 

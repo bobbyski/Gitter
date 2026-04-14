@@ -1,20 +1,13 @@
 #!/usr/bin/env python3
-
 import argparse
-from operator import index
-
-from rich.markdown import Markdown
-
 from CommandLine.CommandLineAddProject import add_project
 from CommandLine.CommandLineHelp import show_help
 from CommandLine.CommandLineIssue import issues
 from CommandLine.CommandLineNotes import notes
 from CommandLine.CommandLineStatus import status
+from CommandLine.CommandLineVersion import show_version
 from model.MainFileManager import MainFileManager
 from pathlib import Path
-from rich.console import Console
-
-from BusinessLogic.toml_helper import TomlHelper
 
 def build_parser():
     # styles = list(get_all_styles())
@@ -38,13 +31,6 @@ def build_parser():
     parser.add_argument( '-t', '--theme', type=str, help='The theme to use', default='monokai')
 
     return parser
-
-def show_version(version):
-    """Display the version information and exit."""
-    version = TomlHelper().get_version()
-    print(f"Version {version}")
-    exit(0)
-
 
 def main():
     parser = build_parser()

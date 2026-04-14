@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
+from operator import index
+
 from rich.markdown import Markdown
 
+from CommandLine.CommandLineAddProject import add_project
 from CommandLine.CommandLineIssue import issues
 from CommandLine.CommandLineNotes import notes
 from CommandLine.CommandLineStatus import status
@@ -52,31 +55,6 @@ def show_version(version):
     version = TomlHelper().get_version()
     print(f"Version {version}")
     exit(0)
-
-def add_project(name=None):
-    cwd = str(Path.cwd())
-    for project in MainFileManager.shared.projects:
-        if Path(project.directory).resolve() == Path(cwd).resolve():
-            Console().print(f"[red]Already added:[/red] {project.name} ({project.directory})")
-            return
-
-    project_name = name if name else Path(cwd).name
-    new_project = Project(
-        name=project_name,
-        directory=cwd,
-        status="",
-        tagBranch="main",
-        issuePrefixes=[],
-        prPatterns=[],
-        favorite=False,
-        groups=[],
-        commits=[],
-        issues=[],
-        releases=[],
-    )
-    MainFileManager.shared.add_project(new_project)
-    MainFileManager.save_shared_to_json(str(Path.home() / ".gitter"))
-    Console().print(f"[green]Added:[/green] {project_name} ({cwd})")
 
 
 def main():

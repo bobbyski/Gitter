@@ -6,18 +6,15 @@ from operator import index
 from rich.markdown import Markdown
 
 from CommandLine.CommandLineAddProject import add_project
+from CommandLine.CommandLineHelp import show_help
 from CommandLine.CommandLineIssue import issues
 from CommandLine.CommandLineNotes import notes
 from CommandLine.CommandLineStatus import status
 from model.MainFileManager import MainFileManager
-from model.Project import Project
 from pathlib import Path
 from rich.console import Console
-from rich.table import Table
-from rich.text import Text
 
 from BusinessLogic.toml_helper import TomlHelper
-
 
 def build_parser():
     # styles = list(get_all_styles())
@@ -41,14 +38,6 @@ def build_parser():
     parser.add_argument( '-t', '--theme', type=str, help='The theme to use', default='monokai')
 
     return parser
-
-def show_help(topic: str):
-    from BusinessLogic.docs_helper import get_document
-    content = get_document(f"{topic.lower()}.md")
-    if content is None:
-        Console().print(f"[red]No help available for '{topic}'.[/red]")
-        return
-    Console().print(Markdown(content))
 
 def show_version(version):
     """Display the version information and exit."""

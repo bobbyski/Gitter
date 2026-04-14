@@ -2,6 +2,7 @@
 import argparse
 from CommandLine.CommandLineAddProject import add_project
 from CommandLine.CommandLineHelp import show_help
+from CommandLine.CommandLineInteractive import interactive
 from CommandLine.CommandLineIssue import issues
 from CommandLine.CommandLineNotes import notes
 from CommandLine.CommandLineStatus import status
@@ -21,6 +22,7 @@ def build_parser():
     subparsers.add_parser('version', help='show version information', aliases=['Version', 'VERSION'] )
     subparsers.add_parser('notes', help='Show release notes markdown without formatting', aliases=['Notes', 'NOTES'] )
     subparsers.add_parser('raw', help='Show release notes markdown without formatting', aliases=['Raw', 'RAW'] )
+    subparsers.add_parser('easy', help='Ask ne what to do', aliases=['Easy', 'EASY'] )
     help_parser = subparsers.add_parser('help', help='Show help for a topic', aliases=['Help', 'HELP'])
     help_parser.add_argument('topic', type=str, help='Topic to show help for (e.g. add, status, tui)')
 
@@ -40,6 +42,8 @@ def main():
         from TUI.MenuApp import MenuApp
         app = MenuApp()
         app.run()
+    elif args.command.lower() == 'easy':
+        interactive()
     elif args.command.lower() == 'version':
         show_version('0.1.0')
     elif args.command.lower() == 'add':

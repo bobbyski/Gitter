@@ -48,7 +48,7 @@ def status( project_name: str = None ):
         console.print(table)
     else:
         for project in MainFileManager.shared.projects:
-            if project_name is not None and project.name.lower() != project_name.lower():
+            if project_name is not None and project_name.lower() not in project.name.lower():
                 continue
 
             console.print(f"[bold cyan]{project.name}[/bold cyan]")
@@ -62,7 +62,7 @@ def status( project_name: str = None ):
                     table.add_row(_state_text(f.state), Text(f.filename))
                 console.print(table)
 
-            if project.status.unstagedFiles or project.status.filesUntracked or project.status.untrackedFiles:
+            if project.status.unstagedFiles or project.status.filesUntracked:
                 table = Table(title="Unstaged", show_header=True, header_style="bold")
                 table.add_column("State", no_wrap=True, min_width=15)
                 table.add_column("File", no_wrap=True, min_width=60)
@@ -73,14 +73,4 @@ def status( project_name: str = None ):
                     table.add_row(_state_text( "untracked"), Text(f))
                 console.print(table)
 
-            # staged = [(f.state, f.filename) for f in project.status.stagedFiles]
-            # unstaged = [(f.state, f.filename) for f in project.status.unstagedFiles]
-            # untracked = [("untracked", f) for f in project.status.filesUntracked]
-            #
-            # if staged:
-            #     console.print(_files_table("Staged", staged))
-            # if unstaged or untracked:
-            #     console.print(_files_table("Unstaged", unstaged + untracked))
-            # if not staged and not unstaged and not untracked:
-            #     console.print(Text("  Nothing to commit", style="dim"))
             console.print()

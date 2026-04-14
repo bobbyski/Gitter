@@ -31,14 +31,18 @@ Gitter shows the status, current release, and upcoming issues for all your confi
 - Git installed and available on `PATH`
 
 ## Installation
-From PyPi
+
+### From PyPI (recommended)
+
 ```bash
+python -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
 pip install gitterapp
 ```
 
-* Note: the PyPi package adds gitter and gitterapp to your PATH, so you can run it from either. 
+* Note: the PyPI package adds `gitter` and `gitterapp` to your PATH, so you can run it from either.
 
-From Source:
+### From Source:
 ```bash
 git clone https://github.com/bobbyskinnerart/Gitter.git
 cd Gitter

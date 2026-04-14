@@ -1,19 +1,13 @@
 #!/usr/bin/env python3
-
 import argparse
-from rich.markdown import Markdown
-
+from CommandLine.CommandLineAddProject import add_project
+from CommandLine.CommandLineHelp import show_help
 from CommandLine.CommandLineIssue import issues
+from CommandLine.CommandLineNotes import notes
 from CommandLine.CommandLineStatus import status
+from CommandLine.CommandLineVersion import show_version
 from model.MainFileManager import MainFileManager
-from model.Project import Project
 from pathlib import Path
-from rich.console import Console
-from rich.table import Table
-from rich.text import Text
-
-from BusinessLogic.toml_helper import TomlHelper
-
 
 def build_parser():
     # styles = list(get_all_styles())
@@ -37,66 +31,6 @@ def build_parser():
     parser.add_argument( '-t', '--theme', type=str, help='The theme to use', default='monokai')
 
     return parser
-
-def show_help(topic: str):
-    from BusinessLogic.docs_helper import get_document
-    content = get_document(f"{topic.lower()}.md")
-    if content is None:
-        Console().print(f"[red]No help available for '{topic}'.[/red]")
-        return
-    Console().print(Markdown(content))
-
-def show_version(version):
-    """Display the version information and exit."""
-    version = TomlHelper().get_version()
-    print(f"Version {version}")
-    exit(0)
-
-def add_project(name=None):
-    cwd = str(Path.cwd())
-    for project in MainFileManager.shared.projects:
-        if Path(project.directory).resolve() == Path(cwd).resolve():
-            Console().print(f"[red]Already added:[/red] {project.name} ({project.directory})")
-            return
-
-    project_name = name if name else Path(cwd).name
-    new_project = Project(
-        name=project_name,
-        directory=cwd,
-        status="",
-        tagBranch="main",
-        issuePrefixes=[],
-        prPatterns=[],
-        favorite=False,
-        groups=[],
-        commits=[],
-        issues=[],
-        releases=[],
-    )
-    MainFileManager.shared.add_project(new_project)
-    MainFileManager.save_shared_to_json(str(Path.home() / ".gitter"))
-    Console().print(f"[green]Added:[/green] {project_name} ({cwd})")
-
-
-def notes(project_name=None, release_name=None, markdown=False, raw=False, code_theme='monokai' ):
-    console = Console()
-
-    for project in MainFileManager.shared.projects:
-        if project_name is not None and project.name.lower() != project_name.lower():
-            continue
-
-        releases_with_issues = [r for r in project.releases if len(r.issues) > 0]
-        if not releases_with_issues:
-            continue
-
-        if raw:
-            text = project.release_notes_markdown( release_name=release_name )
-            print(text)
-        elif markdown:
-            markdown = Markdown(project.release_notes_markdown( release_name=release_name ), code_theme=code_theme)
-            console.print(markdown)
-        else:
-            console.print(project.release_notes( release_name=release_name ))
 
 def main():
     parser = build_parser()

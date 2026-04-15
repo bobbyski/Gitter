@@ -11,16 +11,15 @@ def issues(project_name=None, release_name=None):
     table.add_column("Issue", style="cyan", no_wrap=True)
     table.add_column("Commit Summary" )
 
-    first_project = True
-    for project in MainFileManager.shared.projects:
-        if project_name is not None and project.name.lower() != project_name.lower():
+    project_name_lower = str(project_name).lower() if project_name is not None else None
+    projects = MainFileManager.shared.projects
+    for project in projects:
+        if project_name is not None and project_name_lower not in project.name.lower():
             continue
 
         releases_with_issues = [r for r in project.releases if len(r.issues) > 0]
         if not releases_with_issues:
             continue
-
-        first_project = False
 
         SEP = Text("─" * 30, style="dim")
 

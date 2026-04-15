@@ -2,10 +2,12 @@ from inquirer_textual import prompts
 from BusinessLogic.toml_helper import TomlHelper
 from CommandLine.CommandLineIssue import issues
 from TUI.MenuApp import MenuApp
+from model.MainFileManager import MainFileManager
 
 def get_project_and_issue():
-    project = prompts.text("Enter project name: ")
-    version = prompts.text("Enter version number: ")
+    projects = ["All projects"] + sorted([p.name for p in MainFileManager.shared.projects], key=str.casefold)
+    project = prompts.select("Select project", choices=projects)
+    version = prompts.text("Enter version number (or partial version): ")
 
     if version == "":
         version = None

@@ -38,17 +38,8 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
 
-
-    if args.command.lower() == 'tui':
-        from TUI.MenuApp import MenuApp
-        app = MenuApp()
-        app.run()
-    elif args.command.lower() == 'version':
+    if args.command.lower() == 'version':
         show_version('0.1.0')
-    elif args.command.lower() == 'add':
-        pathname = str(Path.home() / ".gitter")
-        MainFileManager.load_shared_from_json(pathname)
-        add_project(args.project)
     elif args.command.lower() == 'help':
         show_help(args.topic)
     else:
@@ -56,10 +47,15 @@ def main():
         MainFileManager.load_shared_from_json(pathname)
         MainFileManager.update_all_projects()
 
-        for project in MainFileManager.shared.projects:
-            project.update()
-
-        if args.command.lower() == 'status':
+        if args.command.lower() == 'tui':
+            from TUI.MenuApp import MenuApp
+            app = MenuApp()
+            app.run()
+        elif args.command.lower() == 'add':
+            pathname = str(Path.home() / ".gitter")
+            MainFileManager.load_shared_from_json(pathname)
+            add_project(args.project)
+        elif args.command.lower() == 'status':
             status( args.project )
         elif args.command.lower() == 'easy':
             interactive()

@@ -1,5 +1,6 @@
 from inquirer_textual import prompts
 from BusinessLogic.toml_helper import TomlHelper
+from CommandLine.CommandLineHelp import show_help
 from CommandLine.CommandLineIssue import issues
 from CommandLine.CommandLineNotes import notes
 from TUI.MenuApp import MenuApp
@@ -43,7 +44,7 @@ def interactive():
     elif choice.value.lower() == "help":
         commands = ["add", "status", "issues", "notes", "raw", "version", "help", "tui", "exit"]
         cmd = prompts.select("What would you like to do?", choices=commands)
-        help(cmd)
+        show_help(f"{cmd}")
     elif choice.value.lower() == "version":
         print(f"Version: {TomlHelper().get_version()}")
     elif choice.value.lower() == "issues":

@@ -1,12 +1,22 @@
 from inquirer_textual import prompts
 from BusinessLogic.toml_helper import TomlHelper
 from CommandLine.CommandLineIssue import issues
+from CommandLine.CommandLineNotes import notes
 from TUI.MenuApp import MenuApp
 from model.MainFileManager import MainFileManager
 
-def get_project_and_issue():
+def get_project():
     projects = ["All projects"] + sorted([p.name for p in MainFileManager.shared.projects], key=str.casefold)
     project = prompts.select("Select project", choices=projects)
+
+    if project == "":
+        project = None
+    else:
+        project = str(project)
+
+    return project
+
+def get_versions( project: str | None = None ):
     version = prompts.text("Enter version number (or partial version): ")
 
     if version == "":
@@ -14,12 +24,11 @@ def get_project_and_issue():
     else:
         version = str(version)
 
-    if project == "":
-        project = None
-    else:
-        project = str(project)
+    return version
 
-    return project, version
+def get_markdown():
+    markdown = prompts.confirm("Markdown?")
+    return markdown
 
 
 def interactive():
@@ -38,7 +47,19 @@ def interactive():
     elif choice.value.lower() == "version":
         print(f"Version: {TomlHelper().get_version()}")
     elif choice.value.lower() == "issues":
-        project, version = get_project_and_issue()
+        project = get_project()
+        version = get_versions(project)
         issues(project, version)
+    elif choice.value.lower() == "notes":
+        project = get_project()
+        version = get_versions(project)
+        markdown = get_markdown()
+        notes(project, version, markdown=markdown , raw=False)
+    elif choice.value.lower() == "raw":
+        project = get_project()
+        version = get_versions(project)
+        notes(project, version, markdown=False, raw=True)
+    elif choice.value.lower() == "exit":
+        return
     else:
         print(f"Command yet available in easy mode: {choice} will be added later")

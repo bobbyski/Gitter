@@ -50,5 +50,10 @@ class MainFileManager:
         except Exception:
             loaded = MainFile("untitled")
 
-
         return cls.shared
+
+    @classmethod
+    def update_all_projects(cls):
+        for project in cls.shared.projects:
+            project.update()
+        cls.shared.sort_projects()

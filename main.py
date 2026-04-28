@@ -60,7 +60,7 @@ def main():
         elif args.command.lower() == 'easy':
             interactive()
         elif args.command.lower() == 'issues':
-            issues( args.project, args.release )
+            issues( args.project, args.release, invertReleases=True )
         elif args.command.lower() == 'notes':
             notes( args.project, args.release, markdown=args.markdown, raw=False, code_theme=args.theme )
         elif args.command.lower() == 'raw':

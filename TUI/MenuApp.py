@@ -333,9 +333,8 @@ class MenuApp(App):
         else:
             self.releaseNotesText = self.generate_release_notes_markdown()
 
-        self.releaseNotesWindow.markdown_content = self.releaseNotesText
+        self.releaseNotesWindow.set_markdown( self.releaseNotesText )
         self.lastMarkdown = self.releaseNotesText
-        self.releaseNotesWindow.query_one(Markdown).update(self.releaseNotesText)
         # self.refresh( recompose=True )
 
     def generate_markdown(self, project ) -> str:

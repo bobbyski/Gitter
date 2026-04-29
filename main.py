@@ -31,6 +31,7 @@ def build_parser():
     parser.add_argument( '-m', '--markdown', action='store_true', help='Show release notes in markdown format')
     # parser.add_argument( '-t', '--theme', type=str, help='The theme to use', choices=styles, default='monokai')
     parser.add_argument( '-t', '--theme', type=str, help='The theme to use', default='monokai')
+    parser.add_argument( '-s', '--sparse', action='store_true', help='Just show number on issues, no issue title')
 
     return parser
 
@@ -60,7 +61,7 @@ def main():
         elif args.command.lower() == 'easy':
             interactive()
         elif args.command.lower() == 'issues':
-            issues( args.project, args.release, invertReleases=True )
+            issues( args.project, args.release, invertReleases=True, numbersOnly=args.sparse )
         elif args.command.lower() == 'notes':
             notes( args.project, args.release, markdown=args.markdown, raw=False, code_theme=args.theme )
         elif args.command.lower() == 'raw':

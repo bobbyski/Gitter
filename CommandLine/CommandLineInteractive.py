@@ -31,6 +31,10 @@ def get_markdown():
     markdown = prompts.confirm("Markdown?")
     return markdown
 
+def get_sparse():
+    sparse = prompts.confirm("Show numbers only?")
+    return sparse
+
 
 def interactive():
     commands = ["add", "status", "issues", "notes", "raw", "version", "help", "tui", "exit"]
@@ -50,7 +54,8 @@ def interactive():
     elif choice.value.lower() == "issues":
         project = get_project()
         version = get_versions(project)
-        issues(project, version, invertReleases=True )
+        sparse = get_sparse()
+        issues(project, version, invertReleases=True, numbersOnly=sparse.value )
     elif choice.value.lower() == "notes":
         project = get_project()
         version = get_versions(project)

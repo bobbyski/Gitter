@@ -3,8 +3,38 @@ from rich.table import Table
 from rich.text import Text
 from rich.console import Console
 
-def issues(project_name=None, release_name=None, invertReleases=False ):
+def issues(project_name=None, release_name=None, invertReleases=False, numbersOnly=False ):
     console = Console()
+
+    if numbersOnly:
+        table = Table(title="Issues", show_header=True, header_style="bold")
+        table.add_column("Release", no_wrap=True)
+        table.add_column("Issues")
+
+        project_name_lower = str(project_name).lower() if project_name is not None else None
+        for project in MainFileManager.shared.projects:
+            if project_name is not None and project_name_lower not in project.name.lower():
+                continue
+
+            releases_with_issues = [r for r in project.releases if len(r.issues) > 0]
+            if not releases_with_issues:
+                continue
+
+            if invertReleases:
+                next_releases = [r for r in releases_with_issues if r.name == "Next release"]
+                other_releases = [r for r in releases_with_issues if r.name != "Next release"]
+                releases_with_issues = list(reversed(other_releases)) + next_releases
+
+            for release in releases_with_issues:
+                if release_name is not None and not release.name.lower().startswith(release_name.lower()):
+                    continue
+                release_label = Text(release.name, style="bold magenta" if release.name == "Next release" else "bold yellow")
+                numbers = ", ".join(i.number for i in release.issues)
+                table.add_row(release_label, numbers)
+
+        console.print(table)
+        return
+
     table = Table(title="Issues", show_header=True, header_style="bold")
     table.add_column("Project", style="bold cyan", no_wrap=True)
     table.add_column("Release", no_wrap=True)

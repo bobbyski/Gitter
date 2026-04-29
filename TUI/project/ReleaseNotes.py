@@ -31,7 +31,7 @@ class ReleaseNotesView(Static):
         """Close the view when clicked outside."""
         self.dismiss()
 
-    def set_markdown(self, markdown_content: str, refresh: bool = True, max_lines: int = 5000 ) -> None:
+    def set_markdown(self, markdown_content: str, refresh: bool = True, max_lines: int = 2000 ) -> None:
         """Update the markdown content displayed in the view."""
         lines = markdown_content.splitlines()
         if len(lines) > max_lines:
